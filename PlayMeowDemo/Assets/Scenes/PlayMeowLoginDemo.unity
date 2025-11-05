@@ -177,6 +177,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5728745971265054887, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
+      propertyPath: loadingList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5728745971265054887, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
+      propertyPath: loadingList.Array.data[0].bVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5728745971265054887, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
+      propertyPath: loadingList.Array.data[0].uiPerfab
+      value: 
+      objectReference: {fileID: 1436703631437197157, guid: 1bfec29f79e8c394daf9261269536850, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
 --- !u!1001 &645622843
@@ -584,7 +596,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 948, y: 2043}
+  m_ReferenceResolution: {x: 720, y: 1561}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
