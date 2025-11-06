@@ -1,8 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using XPlan;
+using XPlan.UI;
 
 namespace PlayMeowDemo
 {
@@ -12,6 +13,18 @@ namespace PlayMeowDemo
         protected override void OnInitialLogic()
         {
             RegisterLogic(new LoginPresenter());
+        }
+
+        [ContextMenu("Show Login UI")]
+        private void ShowLoginUI()
+        {
+            UISystem.DirectCall(UICommand.ShowLogin);
+        }
+
+        [ContextMenu("Send Login Deny")]
+        private void SendLoginDeny()
+        {
+            UISystem.DirectCall<LoginError>(UICommand.ShowLoginError, LoginError.AccountOrPWDeny);
         }
     }
 }

@@ -153,5 +153,17 @@ namespace PlayMeowDemo
                     break;
             }
         }
+
+        [ContextMenu("Show Login UI")]
+        private void ShowLoginUI()
+        {
+            UISystem.DirectCall(UICommand.ShowLogin);
+        }
+
+        [ContextMenu("Send Login Deny")]
+        private void SendLoginDeny()
+        {
+            UISystem.DirectCall<LoginError>(UICommand.ShowLoginError, LoginError.AccountOrPWDeny);
+        }
     }
 }
