@@ -84,8 +84,18 @@ namespace PlayMeowDemo
             });
         }
 
+        private void OnEnable()
+        {
+            /******************************
+             * 初始化
+             * ***************************/
+            ChangeErrorMsg(LoginError.None);
+        }
+
         private void Logining()
         {
+            NotifyError(LoginError.None);
+
             string account  = _accountTxt.text;
             string pw       = _pwTxt.text;
 
