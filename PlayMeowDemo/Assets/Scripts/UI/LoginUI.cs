@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using XPlan;
@@ -12,19 +14,30 @@ namespace PlayMeowDemo
     public enum LoginError
     {
         None        = 0,
+        NoAccount,
+        NoPW,
+        NotEmail,
         AccountOrPW,
     }
 
     public class LoginUI : UIBase
     {
-        [SerializeField] Button _loginBtn;
-        [SerializeField] Button _googleBtn;     
-        [SerializeField] Button _regNewBtn;
-        [SerializeField] Button _forgetPWBtn;
-        [SerializeField] Button _closeBtn;
+        [Header("登入按鈕")]
+        [SerializeField] private Button _loginBtn;
+        [SerializeField] private Button _googleBtn;     
+        [SerializeField] private Button _regNewBtn;
+        [SerializeField] private Button _forgetPWBtn;
 
-        [SerializeField] InputField _accountTxt;
-        [SerializeField] InputField _pwTxt;
+        [Header("輸入框相關")]
+        [SerializeField] private InputField _accountTxt;
+        [SerializeField] private InputField _pwTxt;
+        [SerializeField] private Image _accountRoll;
+        [SerializeField] private Image _pwRoll;
+        [SerializeField] private PointEventTriggerHandler _accountTrigger;
+        [SerializeField] private PointEventTriggerHandler _pwTrigger;
+
+        [Header("其他")]
+        [SerializeField] private Button _closeBtn;
 
         // Start is called before the first frame update
         private void Awake()
@@ -41,8 +54,11 @@ namespace PlayMeowDemo
                 ToggleUI(gameObject, false);
             });
 
+            RegisterPointRoll("", _accountTrigger, RollIn, RollOut);
+            RegisterPointRoll("", _pwTrigger, RollIn, RollOut);
+
             /******************************
-             * 接收Presenter回應
+             * 接收Presenter指令
              * ***************************/
             ListenCall(UICommand.ShowLogin, () =>
             {
@@ -51,8 +67,32 @@ namespace PlayMeowDemo
 
             ListenCall<LoginError>(UICommand.ShowLoginError, (error) => 
             {
-                
+                NotifyError(error);
             });
+        }
+
+        private void RollIn(PointerEventData data, PointEventTriggerHandler handler)
+        {
+            if(handler.gameObject == _accountTxt.gameObject)
+            {
+                _accountRoll.gameObject.SetActive(true);
+            }
+            else
+            {
+                _pwRoll.gameObject.SetActive(true);
+            }
+        }
+
+        private void RollOut(PointerEventData data, PointEventTriggerHandler handler)
+        {
+            if (handler.gameObject == _accountTxt.gameObject)
+            {
+                _accountRoll.gameObject.SetActive(false);
+            }
+            else
+            {
+                _pwRoll.gameObject.SetActive(false);
+            }
         }
 
         private void Logining()
@@ -62,11 +102,13 @@ namespace PlayMeowDemo
 
             if (string.IsNullOrEmpty(account))
             {
+                NotifyError(LoginError.NoAccount);
                 return;
             }
 
             if (string.IsNullOrEmpty(pw))
             {
+                NotifyError(LoginError.NoPW);
                 return;
             }
 
@@ -74,10 +116,16 @@ namespace PlayMeowDemo
             // 因此建議設定為standard然後在代碼裡面檢查
             if (!account.IsValidEmail())
             {
+                NotifyError(LoginError.NotEmail);
                 return;
             }
 
             DirectTrigger<(string, string)>(UIRequest.Login, (account, pw));
+        }
+
+        private void NotifyError(LoginError error)
+        {
+
         }
     }
 }

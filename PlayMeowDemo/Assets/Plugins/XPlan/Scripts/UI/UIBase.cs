@@ -237,23 +237,43 @@ namespace XPlan.UI
 		}
 
 		protected void RegisterPointTrigger(string uniqueID, PointEventTriggerHandler pointTrigger,
-												Action<PointerEventData> onPress = null,
-												Action<PointerEventData> onPull = null)
+												Action<PointerEventData, PointEventTriggerHandler> onPress = null,
+												Action<PointerEventData, PointEventTriggerHandler> onPull = null)
 		{
 			pointTrigger.OnPointDown += (val) =>
 			{
-				onPress?.Invoke(val);
+				onPress?.Invoke(val, pointTrigger);
 
 				UISystem.TriggerCallback<bool>(uniqueID, true, null);
 			};
 
 			pointTrigger.OnPointUp += (val) =>
 			{
-				onPull?.Invoke(val);
+				onPull?.Invoke(val, pointTrigger);
 
 				UISystem.TriggerCallback<bool>(uniqueID, false, null);
 			};
 		}
+
+
+        protected void RegisterPointRoll(string uniqueID, PointEventTriggerHandler pointTrigger,
+                                    Action<PointerEventData, PointEventTriggerHandler> onEnter = null,
+                                    Action<PointerEventData, PointEventTriggerHandler> onExit = null)
+        {
+            pointTrigger.OnPointEnter += (val) =>
+            {
+                onEnter?.Invoke(val, pointTrigger);
+
+                UISystem.TriggerCallback<bool>(uniqueID, true, null);
+            };
+
+            pointTrigger.OnPointExit += (val) =>
+            {
+                onExit?.Invoke(val, pointTrigger);
+
+                UISystem.TriggerCallback<bool>(uniqueID, false, null);
+            };
+        }
 
 		protected void DirectTrigger<T>(string uniqueID, T param, Action<T> onPress = null)
 		{

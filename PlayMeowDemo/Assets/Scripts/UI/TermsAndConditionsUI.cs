@@ -10,8 +10,9 @@ namespace PlayMeowDemo
 {
     public class TermsAndConditionsUI : UIBase
     {
-        [SerializeField] Button _privacyBtn;
-        [SerializeField] Button _tcBtn;
+        [Header("T&C相關")]
+        [SerializeField] private Button _privacyBtn;
+        [SerializeField] private Button _tcBtn;
 
         // Start is called before the first frame update
         private void Awake()
