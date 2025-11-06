@@ -894,7 +894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  minAlpha: 0.2
+  minAlpha: 0
   maxAlpha: 1
   fadeTime: 0.1
 --- !u!114 &8728556703428438847
@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  minScale: 0.5
+  minScale: 0.6
   maxScale: 1
   fadeTime: 0.1
 --- !u!1 &1436703631847966222
