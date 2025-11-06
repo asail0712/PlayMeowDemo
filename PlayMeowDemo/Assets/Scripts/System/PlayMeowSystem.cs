@@ -18,6 +18,8 @@ namespace PlayMeowDemo
         [ContextMenu("Show Login UI")]
         private void ShowLoginUI()
         {
+            LogSystem.Record("使用者要求開啟Login UI");
+
             UISystem.DirectCall(UICommand.ShowLogin);
         }
 
