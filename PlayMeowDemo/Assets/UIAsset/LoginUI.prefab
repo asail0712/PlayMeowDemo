@@ -124,7 +124,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5FD8\u8A18\u5BC6\u78BC"
+  m_Text: KEY_ForgetPW
 --- !u!1 &1012399514
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,7 +708,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u96B1\u79C1\u6B0A"
+  m_Text: KEY_Privacy
 --- !u!1 &1436703630707077323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,7 +1335,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -160, y: -35}
-  m_SizeDelta: {x: 180, y: 40}
+  m_SizeDelta: {x: 300, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7249379382446005086
 CanvasRenderer:
@@ -1485,7 +1485,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6216\u900F\u904E\u4EE5\u4E0B\u65B9\u5F0F\u7E7C\u7E8C"
+  m_Text: KEY_LoginWithOther
 --- !u!1 &3758133999492844172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1565,7 +1565,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u767B\u5165"
+  m_Text: KEY_Login
 --- !u!1 &4235394024998204441
 GameObject:
   m_ObjectHideFlags: 0
@@ -1645,7 +1645,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u670D\u52D9\u689D\u6B3E"
+  m_Text: KEY_T&C
 --- !u!1 &4372021370688254027
 GameObject:
   m_ObjectHideFlags: 0
@@ -1955,7 +1955,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8A3B\u518A\u65B0\u5E33\u865F"
+  m_Text: KEY_RegNew
 --- !u!1 &5163813388907685280
 GameObject:
   m_ObjectHideFlags: 0
@@ -2035,7 +2035,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8ACB\u8F38\u5165\u5BC6\u78BC"
+  m_Text: KEY_PlzInputPW
 --- !u!1 &5303230006838509426
 GameObject:
   m_ObjectHideFlags: 0
@@ -2234,7 +2234,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 160.9, y: -35}
-  m_SizeDelta: {x: 180, y: 40}
+  m_SizeDelta: {x: 300, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &575386200777150981
 CanvasRenderer:
@@ -2384,7 +2384,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8ACB\u8F38\u5165E-Mail"
+  m_Text: KEY_PlzInputEmail
 --- !u!1 &7057031403660972166
 GameObject:
   m_ObjectHideFlags: 0
@@ -2464,7 +2464,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8ACB\u8F38\u5165\u5E33\u865F\u5BC6\u78BC"
+  m_Text: KEY_PlzInputIdentity
 --- !u!1 &7811996515081402392
 GameObject:
   m_ObjectHideFlags: 0

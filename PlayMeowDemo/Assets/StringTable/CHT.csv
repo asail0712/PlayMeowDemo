@@ -1,3 +1,13 @@
-Key_DemoStr1, 你好嗎?
-Key_DemoStr2, 謝謝你
-Key_DemoStr3, 不客氣
+KEY_NoAccount, e-mail 不得為空
+KEY_NoPW, 密碼不得為空
+KEY_NotEmail, e-mail 格式不正確
+KEY_AccountOrPWDeny, 帳號或密碼錯誤
+KEY_PlzInputIdentity, 請輸入帳號密碼
+KEY_PlzInputEmail, 請輸入E-Mail
+KEY_PlzInputPW, 請輸入密碼
+KEY_Login, 登入
+KEY_ForgetPW, 忘記密碼
+KEY_RegNew, 註冊新帳號
+KEY_Privacy, 隱私權
+KEY_T&C, 服務條款
+KEY_LoginWithOther, 或透過以下方式繼續
