@@ -17,7 +17,7 @@ namespace PlayMeowDemo
         NoAccount,
         NoPW,
         NotEmail,
-        AccountOrPW,
+        AccountOrPWDeny,
     }
 
     public class LoginUI : UIBase
@@ -35,6 +35,9 @@ namespace PlayMeowDemo
         [SerializeField] private Image _pwRoll;
         [SerializeField] private PointEventTriggerHandler _accountTrigger;
         [SerializeField] private PointEventTriggerHandler _pwTrigger;
+
+        [Header("錯誤訊息處理")]
+        [SerializeField] private Text _errorTxt;
 
         [Header("其他")]
         [SerializeField] private Button _closeBtn;
@@ -125,7 +128,21 @@ namespace PlayMeowDemo
 
         private void NotifyError(LoginError error)
         {
-
+            switch(error)
+            {
+                case LoginError.NoAccount:
+                    _errorTxt.text = GetStr("KEY_NoAccount");
+                    break;
+                case LoginError.NoPW:
+                    _errorTxt.text = GetStr("KEY_NoPW");
+                    break;
+                case LoginError.NotEmail:
+                    _errorTxt.text = GetStr("KEY_NotEmail");
+                    break;
+                case LoginError.AccountOrPWDeny:
+                    _errorTxt.text = GetStr("KEY_AccountOrPWDeny");
+                    break;
+            }
         }
     }
 }
