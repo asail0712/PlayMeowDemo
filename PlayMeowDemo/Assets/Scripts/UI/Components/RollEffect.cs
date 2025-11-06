@@ -1,28 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using XPlan.UI;
 
 namespace PlayMeowDemo
 {
-    public class RollEffect : MonoBehaviour
+    public class RollEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        // Start is called before the first frame update
-        [SerializeField] private PointEventTriggerHandler handler;
         [SerializeField] private Image rollImg;
-        private void Awake()
+        
+        public void OnPointerEnter(PointerEventData eventData)
         {
-            handler.OnPointEnter += (e) =>
-            {
-                rollImg.gameObject.SetActive(true);
-            };
+            rollImg.gameObject.SetActive(true);
+        }
 
-            handler.OnPointExit += (e) =>
-            {
-                rollImg.gameObject.SetActive(false);
-            };
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            rollImg.gameObject.SetActive(false);
         }
     }
 }
