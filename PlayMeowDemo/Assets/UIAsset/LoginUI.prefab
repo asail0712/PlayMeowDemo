@@ -810,8 +810,8 @@ GameObject:
   - component: {fileID: 1436703631437197156}
   - component: {fileID: 9074673763197566581}
   - component: {fileID: 5642720893286043456}
-  - component: {fileID: 8702567847166619153}
-  - component: {fileID: 7975890703684874078}
+  - component: {fileID: -3100735272060718012}
+  - component: {fileID: 8728556703428438847}
   m_Layer: 0
   m_Name: LoginUI
   m_TagString: Untagged
@@ -881,7 +881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3b19168a5e907d48b9b055b87b2a5b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8702567847166619153
+--- !u!114 &-3100735272060718012
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -896,8 +896,8 @@ MonoBehaviour:
   type: 2
   minAlpha: 0.2
   maxAlpha: 1
-  fadeTime: 0.08
---- !u!114 &7975890703684874078
+  fadeTime: 0.1
+--- !u!114 &8728556703428438847
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -910,9 +910,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  minScale: 0.75
+  minScale: 0.5
   maxScale: 1
-  fadeTime: 0.08
+  fadeTime: 0.1
 --- !u!1 &1436703631847966222
 GameObject:
   m_ObjectHideFlags: 0
