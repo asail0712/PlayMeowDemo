@@ -33,18 +33,29 @@ namespace PlayMeowDemo
         [SerializeField] private InputField _pwTxt;
         [SerializeField] private Image _accountRoll;
         [SerializeField] private Image _pwRoll;
-        [SerializeField] private PointEventTriggerHandler _accountTrigger;
-        [SerializeField] private PointEventTriggerHandler _pwTrigger;
 
         [Header("錯誤訊息處理")]
         [SerializeField] private Text _errorTxt;
 
+        [Header("T&C相關")]
+        [SerializeField] private Button _privacyBtn;
+        [SerializeField] private Button _tcBtn;
+
         [Header("其他")]
         [SerializeField] private Button _closeBtn;
+
+        private Coroutine errorNotifyRoutine;
+
+        private const float Error_ShowTime = 3.5f;
 
         // Start is called before the first frame update
         private void Awake()
         {
+            /******************************
+             * 初始化
+             * ***************************/
+            ChangeErrorMsg(LoginError.None);
+
             /******************************
              * 使用者對View的操作
              * ***************************/
@@ -52,13 +63,12 @@ namespace PlayMeowDemo
             RegisterButton(UIRequest.GoogleLogin, _googleBtn);
             RegisterButton(UIRequest.RegisterNewAcc, _regNewBtn);
             RegisterButton(UIRequest.ForwgetPassWord, _forgetPWBtn);
+            RegisterButton(UIRequest.ShowPrivacy, _privacyBtn);
+            RegisterButton(UIRequest.ShowTC, _tcBtn);
             RegisterButton(UIRequest.Close, _closeBtn, () => 
             {
                 ToggleUI(gameObject, false);
             });
-
-            RegisterPointRoll("", _accountTrigger, RollIn, RollOut);
-            RegisterPointRoll("", _pwTrigger, RollIn, RollOut);
 
             /******************************
              * 接收Presenter指令
@@ -72,30 +82,6 @@ namespace PlayMeowDemo
             {
                 NotifyError(error);
             });
-        }
-
-        private void RollIn(PointerEventData data, PointEventTriggerHandler handler)
-        {
-            if(handler.gameObject == _accountTxt.gameObject)
-            {
-                _accountRoll.gameObject.SetActive(true);
-            }
-            else
-            {
-                _pwRoll.gameObject.SetActive(true);
-            }
-        }
-
-        private void RollOut(PointerEventData data, PointEventTriggerHandler handler)
-        {
-            if (handler.gameObject == _accountTxt.gameObject)
-            {
-                _accountRoll.gameObject.SetActive(false);
-            }
-            else
-            {
-                _pwRoll.gameObject.SetActive(false);
-            }
         }
 
         private void Logining()
@@ -128,8 +114,31 @@ namespace PlayMeowDemo
 
         private void NotifyError(LoginError error)
         {
-            switch(error)
+            if(errorNotifyRoutine != null)
             {
+                StopCoroutine(errorNotifyRoutine);
+                ChangeErrorMsg(LoginError.None);
+            }
+
+            errorNotifyRoutine = StartCoroutine(NotifyError_Internal(error));
+        }
+
+        private IEnumerator NotifyError_Internal(LoginError error)
+        {
+            ChangeErrorMsg(error);
+
+            yield return new WaitForSeconds(Error_ShowTime);
+
+            ChangeErrorMsg(LoginError.None);
+        }
+
+        private void ChangeErrorMsg(LoginError error)
+        {
+            switch (error)
+            {
+                case LoginError.None:
+                    _errorTxt.text = "";
+                    break;
                 case LoginError.NoAccount:
                     _errorTxt.text = GetStr("KEY_NoAccount");
                     break;

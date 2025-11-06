@@ -236,7 +236,33 @@ namespace XPlan.UI
 			}
 		}
 
-		protected void RegisterPointTrigger(string uniqueID, PointEventTriggerHandler pointTrigger,
+        protected void RegisterPointTrigger(string uniqueID, Button button,
+                                        Action<PointerEventData, PointEventTriggerHandler> onPress = null,
+                                        Action<PointerEventData, PointEventTriggerHandler> onPull = null)
+        {
+			if(!button.TryGetComponent<PointEventTriggerHandler>(out PointEventTriggerHandler pointTrigger))
+			{
+				LogSystem.Record("按鈕上沒有PointEventTriggerHandler", LogType.Error);
+				return;
+			}
+
+			RegisterPointTrigger(uniqueID, pointTrigger, onPress, onPull);            
+        }
+
+        protected void RegisterPointRoll(string uniqueID, Button button,
+                                Action<PointerEventData, PointEventTriggerHandler> onEnter = null,
+                                Action<PointerEventData, PointEventTriggerHandler> onExit = null)
+        {
+            if (!button.TryGetComponent<PointEventTriggerHandler>(out PointEventTriggerHandler pointTrigger))
+            {
+                LogSystem.Record("按鈕上沒有PointEventTriggerHandler", LogType.Error);
+                return;
+            }
+
+            RegisterPointRoll(uniqueID, pointTrigger, onEnter, onExit);
+        }
+
+        protected void RegisterPointTrigger(string uniqueID, PointEventTriggerHandler pointTrigger,
 												Action<PointerEventData, PointEventTriggerHandler> onPress = null,
 												Action<PointerEventData, PointEventTriggerHandler> onPull = null)
 		{
@@ -254,7 +280,6 @@ namespace XPlan.UI
 				UISystem.TriggerCallback<bool>(uniqueID, false, null);
 			};
 		}
-
 
         protected void RegisterPointRoll(string uniqueID, PointEventTriggerHandler pointTrigger,
                                     Action<PointerEventData, PointEventTriggerHandler> onEnter = null,
