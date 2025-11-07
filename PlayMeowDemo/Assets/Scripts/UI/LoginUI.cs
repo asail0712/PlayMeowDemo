@@ -1,13 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 using XPlan;
 using XPlan.UI;
-using XPlan.Utility;
 
 namespace PlayMeowDemo 
 {
@@ -35,18 +30,11 @@ namespace PlayMeowDemo
         [Header("其他")]
         [SerializeField] private Button _closeBtn;
 
-        private Coroutine errorNotifyRoutine;
-
-        private const float Error_ShowTime = 3.5f;
+        private Coroutine _errorNotifyRoutine;
 
         // Start is called before the first frame update
         private void Awake()
         {
-            /******************************
-             * 初始化
-             * ***************************/
-            NotifyError("");
-
             /******************************
              * 使用者對View的操作
              * ***************************/
@@ -64,7 +52,7 @@ namespace PlayMeowDemo
             /******************************
              * 接收Presenter指令
              * ***************************/
-            ListenCall(UICommand.ShowLogin, () =>
+            ListenCall(UICommand.OpenLogin, () =>
             {
                 ToggleUI(gameObject, true);
             });
@@ -80,7 +68,14 @@ namespace PlayMeowDemo
             /******************************
              * 初始化
              * ***************************/
+            Initialized();
+        }
+
+        private void Initialized()
+        {
             NotifyError("");
+            _accountTxt.text    = "";
+            _pwTxt.text         = "";
         }
 
         private void Logining()
@@ -95,15 +90,15 @@ namespace PlayMeowDemo
 
         private void NotifyError(string errorStr)
         {
-            if(errorNotifyRoutine != null)
+            if(_errorNotifyRoutine != null)
             {
-                StopCoroutine(errorNotifyRoutine);
+                StopCoroutine(_errorNotifyRoutine);
                 
                 _errorTxt.text      = "";
-                errorNotifyRoutine  = null;
+                _errorNotifyRoutine = null;
             }
-            
-            errorNotifyRoutine  = StartCoroutine(ChangeErrorMsg(errorStr));
+
+            _errorNotifyRoutine = StartCoroutine(ChangeErrorMsg(errorStr));
         }
 
         private IEnumerator ChangeErrorMsg(string errorStr)
@@ -115,7 +110,9 @@ namespace PlayMeowDemo
                 yield break;
             }
 
-            yield return new WaitForSeconds(Error_ShowTime);
+            LogSystem.Record($"登入錯誤: {errorStr}", LogType.Warning);
+
+            yield return new WaitForSeconds(CommonDefine.ErrorShowTime);
 
             _errorTxt.text = "";
         }

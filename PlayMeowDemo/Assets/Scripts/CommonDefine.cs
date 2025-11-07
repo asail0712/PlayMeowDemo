@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace PlayMeowDemo
+﻿namespace PlayMeowDemo
 { 
     public static class CommonDefine
     {
-
+        public const int PwMinLen           = 6;
+        public const float ErrorShowTime    = 3.5f;
     }
 
     public static class UIRequest
@@ -25,7 +22,7 @@ namespace PlayMeowDemo
 
     public static class UICommand
     {
-        public static string ShowLogin          = "ShowLogin";
+        public static string OpenLogin          = "OpenLogin";
         public static string ShowLoginError     = "ShowLoginError";
     }
 }

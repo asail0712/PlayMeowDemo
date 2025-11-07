@@ -1,16 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using XPlan;
-using XPlan.UI;
+﻿using XPlan;
+using XPlan.Observe;
 using XPlan.Utility;
 
 namespace PlayMeowDemo
 {
     public enum LoginError
     {
-        None = 0,
+        None            = 0,
         NoAccount,
         NoPw,
         NotEmail,
@@ -18,13 +14,31 @@ namespace PlayMeowDemo
         AccountOrPWDeny,
     }
 
+    public class ShowLoginMsg : MessageBase
+    {
+        public ShowLoginMsg()
+        {
+        }
+    }
+
+    public class LoginErrorMsg : MessageBase
+    {
+        public LoginError error;
+
+        public LoginErrorMsg(LoginError error)
+        {
+            this.error = error;
+        }
+    }
+
     public class LoginPresenter : LogicComponent
     {        
         // Start is called before the first frame update
         public LoginPresenter()
         {
-            const int PwMinLen = 6;
-
+            /**************************
+             * 接收View的回應
+             * ***********************/
             AddUIListener<(string, string)>(UIRequest.Login, (pair) => 
             {
                 string account  = pair.Item1;
@@ -50,7 +64,7 @@ namespace PlayMeowDemo
                     return;
                 }
 
-                if (pw.Length < PwMinLen)
+                if (pw.Length < CommonDefine.PwMinLen)
                 {
                     DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(LoginError.PwTooShort));
                     return;
@@ -88,6 +102,20 @@ namespace PlayMeowDemo
             {
                 LogSystem.Record($"使用者查看服務條款");
             });
+
+
+            /**************************
+             * 執行Model的要求
+             * ***********************/
+            RegisterNotify<LoginErrorMsg>((msg) => 
+            {
+                DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(msg.error));
+            });
+
+            RegisterNotify<ShowLoginMsg>((dummy) =>
+            {
+                DirectCallUI(UICommand.OpenLogin);
+            });
         }
 
         private string GetErrorMsg(LoginError error)
@@ -97,7 +125,7 @@ namespace PlayMeowDemo
             switch (error)
             {
                 case LoginError.None:
-                    msg = "";
+                    msg = string.Empty;
                     break;
                 case LoginError.NoAccount:
                     msg = GetStr("KEY_NoAccount");

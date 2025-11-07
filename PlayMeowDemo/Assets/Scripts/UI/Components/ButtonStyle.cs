@@ -1,33 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
-using XPlan.UI;
 
 namespace PlayMeowDemo
 {
     public class ButtonStyle : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        [SerializeField] private Text buttonTxt;
+        [SerializeField] private Text _buttonTxt;
 
-        [SerializeField] private float originSize;
-        [SerializeField] private float triggerSize;
-        [SerializeField] private Color originColor;
-        [SerializeField] private Color triggerColor;
+        [SerializeField] private float _originSize;
+        [SerializeField] private float _triggerSize;
+        [SerializeField] private Color _originColor;
+        [SerializeField] private Color _triggerColor;
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            buttonTxt.transform.localScale  = new Vector3(triggerSize, triggerSize, triggerSize);
-            buttonTxt.color                 = triggerColor;
+            _buttonTxt.transform.localScale  = new Vector3(_triggerSize, _triggerSize, _triggerSize);
+            _buttonTxt.color                 = _triggerColor;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            buttonTxt.transform.localScale  = new Vector3(originSize, originSize, originSize);
-            buttonTxt.color                 = originColor;
+            _buttonTxt.transform.localScale  = new Vector3(_originSize, _originSize, _originSize);
+            _buttonTxt.color                 = _originColor;
         }
     }
 }

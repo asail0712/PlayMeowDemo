@@ -624,11 +624,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cc86b5b21150746a5c607455de93ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonTxt: {fileID: 269304271}
-  originSize: 1
-  triggerSize: 0.95
-  originColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
-  triggerColor: {r: 0.6666667, g: 0, b: 0, a: 1}
+  _buttonTxt: {fileID: 269304271}
+  _originSize: 1
+  _triggerSize: 0.95
+  _originColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
+  _triggerColor: {r: 0.6666667, g: 0, b: 0, a: 1}
 --- !u!1 &661819034554002978
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,7 +795,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1436703631437197156}
   - component: {fileID: 9074673763197566581}
-  - component: {fileID: 5642720893286043456}
   - component: {fileID: -3100735272060718012}
   - component: {fileID: 8728556703428438847}
   m_Layer: 0
@@ -853,18 +852,6 @@ MonoBehaviour:
   _privacyBtn: {fileID: 4012857642904064896}
   _tcBtn: {fileID: 1655240142122912515}
   _closeBtn: {fileID: 1118265630}
---- !u!114 &5642720893286043456
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1436703631437197157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b19168a5e907d48b9b055b87b2a5b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-3100735272060718012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1104,7 +1091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9aa0a211690e52489915d8c9bf44a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollImg: {fileID: 5255990936035319315}
+  _rollImg: {fileID: 5255990936035319315}
 --- !u!1 &2618889653724099336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,11 +1386,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cc86b5b21150746a5c607455de93ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonTxt: {fileID: 7457452872714450118}
-  originSize: 1
-  triggerSize: 0.95
-  originColor: {r: 0.95686275, g: 0.7019608, b: 0.7607843, a: 1}
-  triggerColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
+  _buttonTxt: {fileID: 7457452872714450118}
+  _originSize: 1
+  _triggerSize: 0.95
+  _originColor: {r: 0.95686275, g: 0.7019608, b: 0.7607843, a: 1}
+  _triggerColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
 --- !u!1 &3513089982226737882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1999,11 +1986,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cc86b5b21150746a5c607455de93ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonTxt: {fileID: 2880283559294647084}
-  originSize: 1
-  triggerSize: 0.95
-  originColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
-  triggerColor: {r: 0.6666667, g: 0, b: 0, a: 1}
+  _buttonTxt: {fileID: 2880283559294647084}
+  _originSize: 1
+  _triggerSize: 0.95
+  _originColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
+  _triggerColor: {r: 0.6666667, g: 0, b: 0, a: 1}
 --- !u!1 &5011204026811709008
 GameObject:
   m_ObjectHideFlags: 0
@@ -2428,11 +2415,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cc86b5b21150746a5c607455de93ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonTxt: {fileID: 4070052181395351565}
-  originSize: 1
-  triggerSize: 0.95
-  originColor: {r: 0.95686275, g: 0.7019608, b: 0.7607843, a: 1}
-  triggerColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
+  _buttonTxt: {fileID: 4070052181395351565}
+  _originSize: 1
+  _triggerSize: 0.95
+  _originColor: {r: 0.95686275, g: 0.7019608, b: 0.7607843, a: 1}
+  _triggerColor: {r: 1, g: 0.40392157, b: 0.56078434, a: 1}
 --- !u!1 &5796982084552556451
 GameObject:
   m_ObjectHideFlags: 0
@@ -2880,4 +2867,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9aa0a211690e52489915d8c9bf44a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollImg: {fileID: 226744994779664855}
+  _rollImg: {fileID: 226744994779664855}
