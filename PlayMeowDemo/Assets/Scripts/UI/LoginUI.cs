@@ -6,42 +6,44 @@ using XPlan.UI;
 
 namespace PlayMeowDemo 
 {
+    // 登入介面 UI：處理按鈕事件、輸入框、錯誤提示顯示等。
+    // 透過 UIRequest 發送事件給 Presenter，並接收 UICommand 做顯示控制。
     public class LoginUI : UIBase
     {
-        [Header("登入按鈕")]
+        [Header("登入按鈕組")]
         [SerializeField] private Button _loginBtn;
         [SerializeField] private Button _googleBtn;     
         [SerializeField] private Button _regNewBtn;
         [SerializeField] private Button _forgetPWBtn;
 
-        [Header("輸入框相關")]
+        [Header("輸入欄位")]
         [SerializeField] private InputField _accountTxt;
         [SerializeField] private InputField _pwTxt;
-        [SerializeField] private Image _accountRoll;
-        [SerializeField] private Image _pwRoll;
+        [SerializeField] private Image _accountRoll;        // 帳號欄位聚焦時的 UI 響應
+        [SerializeField] private Image _pwRoll;             // 密碼欄位聚焦時的 UI 響應
 
         [Header("錯誤訊息處理")]
         [SerializeField] private Text _errorTxt;
 
-        [Header("T&C相關")]
+        [Header("條款相關")]
         [SerializeField] private Button _privacyBtn;
         [SerializeField] private Button _tcBtn;
 
         [Header("其他")]
         [SerializeField] private Button _closeBtn;
 
-        private Coroutine _errorNotifyRoutine;
+        private Coroutine _errorNotifyRoutine;              // 控制錯誤訊息顯示的 Coroutine
 
         // Start is called before the first frame update
         private void Awake()
         {
             /******************************
-             * 使用者對View的操作
+             * 使用者與 UI 互動 → 發送 UIRequest
              * ***************************/
             RegisterButton("", _loginBtn, Logining);
             RegisterButton(UIRequest.GoogleLogin, _googleBtn);
             RegisterButton(UIRequest.RegisterNewAcc, _regNewBtn);
-            RegisterButton(UIRequest.ForwgetPassWord, _forgetPWBtn);
+            RegisterButton(UIRequest.ForgetPassword, _forgetPWBtn);
             RegisterButton(UIRequest.ShowPrivacy, _privacyBtn);
             RegisterButton(UIRequest.ShowTC, _tcBtn);
             RegisterButton(UIRequest.Close, _closeBtn, () => 
@@ -50,19 +52,22 @@ namespace PlayMeowDemo
             });
 
             /******************************
-             * 接收Presenter指令
+             * Presenter → 發送 UICommand → UI 執行
              * ***************************/
             ListenCall(UICommand.OpenLogin, () =>
             {
+                // 顯示 Login UI
                 ToggleUI(gameObject, true);
             });
 
             ListenCall<string>(UICommand.ShowLoginError, (errorStr) => 
             {
+                // 顯示登入錯誤訊息
                 NotifyError(errorStr);
             });
         }
 
+        // UI 每次啟用時的初始狀態
         private void OnEnable()
         {
             /******************************
@@ -71,6 +76,7 @@ namespace PlayMeowDemo
             Initialized();
         }
 
+        // 初始化輸入框與錯誤訊息
         private void Initialized()
         {
             NotifyError("");
@@ -78,6 +84,7 @@ namespace PlayMeowDemo
             _pwTxt.text         = "";
         }
 
+        // 按下登入按鈕 → 收集帳密 → 丟給 Presenter 判斷
         private void Logining()
         {
             NotifyError("");
@@ -85,9 +92,11 @@ namespace PlayMeowDemo
             string account  = _accountTxt.text;
             string pw       = _pwTxt.text;
 
+            // 傳遞帳密給邏輯層（Presenter）
             DirectTrigger<(string, string)>(UIRequest.Login, (account, pw));
         }
 
+        // 顯示錯誤訊息（會自動計時並清除）
         private void NotifyError(string errorStr)
         {
             if(_errorNotifyRoutine != null)
@@ -100,6 +109,8 @@ namespace PlayMeowDemo
 
             _errorNotifyRoutine = StartCoroutine(ChangeErrorMsg(errorStr));
         }
+
+        // 錯誤訊息顯示 + 倒數清除
 
         private IEnumerator ChangeErrorMsg(string errorStr)
         {

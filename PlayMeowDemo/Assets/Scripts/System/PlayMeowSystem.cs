@@ -5,14 +5,18 @@ using XPlan.UI;
 
 namespace PlayMeowDemo
 {
+    // 系統層的進入點，負責初始注入邏輯與提供測試按鍵（ContextMenu）操作
     public class PlayMeowSystem : SystemBase
     {
-        // Start is called before the first frame update
+        // 系統初始化時會自動呼叫，用來註冊需要的 Presenter（邏輯層）
         protected override void OnInitialLogic()
         {
             RegisterLogic(new LoginPresenter());
         }
 
+        /*****************************************
+         * 在 Inspector 右鍵選單中 建立以下功能
+         * **************************************/
         [ContextMenu("要求顯示Login UI")]
         private void ShowLoginUI()
         {

@@ -4,6 +4,7 @@ using XPlan.Utility;
 
 namespace PlayMeowDemo
 {
+    // 登入錯誤類型列舉：用於 Presenter 與 UI 之間傳遞錯誤狀態
     public enum LoginError
     {
         None            = 0,
@@ -14,13 +15,16 @@ namespace PlayMeowDemo
         AccountOrPWDeny,
     }
 
+    // 要求顯示登入 UI 的訊息（Model/系統 → Presenter → UI）
     public class ShowLoginMsg : MessageBase
     {
         public ShowLoginMsg()
         {
+            // 無需攜帶資料，單純通知顯示登入 UI
         }
     }
 
+    // 登入錯誤訊息（Model/系統 → Presenter → UI）
     public class LoginErrorMsg : MessageBase
     {
         public LoginError error;
@@ -31,39 +35,48 @@ namespace PlayMeowDemo
         }
     }
 
+    // 登入流程的 Presenter：
+    // 1) 接收 View 的使用者操作（UIRequest）並驗證基本輸入。
+    // 2) 依據狀態對 UI 發送指令（UICommand）或記錄 Log。
+    // 3) 接收 Model/系統的通知（RegisterNotify）並轉發給 UI。
     public class LoginPresenter : LogicComponent
     {        
         // Start is called before the first frame update
         public LoginPresenter()
         {
-            /**************************
-             * 接收View的回應
-             * ***********************/
+            /**********************************************
+             * 接收 View 的回應（UI → Presenter）
+             * 使用 AddUIListener 監聽 UIRequest
+             **********************************************/
             AddUIListener<(string, string)>(UIRequest.Login, (pair) => 
             {
-                string account  = pair.Item1;
-                string pw       = pair.Item2;
+                string account  = pair.Item1;   // 使用者輸入帳號
+                string pw       = pair.Item2;   // 使用者輸入密碼
 
+                // 檢查：帳號是否為空
                 if (string.IsNullOrEmpty(account))
                 {
                     DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(LoginError.NoAccount));
                     return;
                 }
 
+                // 檢查：密碼是否為空
                 if (string.IsNullOrEmpty(pw))
                 {
                     DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(LoginError.NoPw));
                     return;
                 }
 
-                // input field 的ContentType設定為email時，會造成iOS手寫輸入異常 
-                // 因此建議設定為standard然後在代碼裡面檢查
+                // 提醒：
+                // InputField 的 ContentType 在 iOS 設為 Email 時，可能影響手寫輸入功能；
+                // 建議以 Standard 輸入並在程式端自行檢查格式。
                 if (!account.IsValidEmail())
                 {
                     DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(LoginError.NotEmail));
                     return;
                 }
 
+                // 檢查：密碼長度是否足夠
                 if (pw.Length < CommonDefine.PwMinLen)
                 {
                     DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(LoginError.PwTooShort));
@@ -72,6 +85,10 @@ namespace PlayMeowDemo
 
                 LogSystem.Record($"使用者要求登入, 帳號為 {account}, 密碼為 {pw}");
             });
+
+            /*******************************************************************
+             * 其餘 UI 操作事件（Google 登入 / 註冊 / 忘記密碼 / 關閉 / 查看條款）
+             * *****************************************************************/
 
             AddUIListener(UIRequest.GoogleLogin, () =>
             {
@@ -83,7 +100,7 @@ namespace PlayMeowDemo
                 LogSystem.Record($"使用者要求註冊新帳號");
             });
 
-            AddUIListener(UIRequest.ForwgetPassWord, () =>
+            AddUIListener(UIRequest.ForgetPassword, () =>
             {
                 LogSystem.Record($"使用者忘記自己的密碼");
             });
@@ -103,10 +120,10 @@ namespace PlayMeowDemo
                 LogSystem.Record($"使用者查看服務條款");
             });
 
-
-            /**************************
-             * 執行Model的要求
-             * ***********************/
+            /***************************************************
+             * 接收 Model/系統 通知（Model/System → Presenter）
+             * 使用 RegisterNotify 監聽 MessageBase
+             ***************************************************/
             RegisterNotify<LoginErrorMsg>((msg) => 
             {
                 DirectCallUI<string>(UICommand.ShowLoginError, GetErrorMsg(msg.error));
@@ -118,6 +135,8 @@ namespace PlayMeowDemo
             });
         }
 
+        // 依照錯誤列舉取得多語系字串（Key → 字串）
+        // 實際顯示的內容由 GetStr(key) 取得
         private string GetErrorMsg(LoginError error)
         {
             string msg = string.Empty;
