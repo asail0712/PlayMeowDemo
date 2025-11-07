@@ -493,8 +493,6 @@ namespace XPlan.UI
 		 * *************************************/
 		public void RefreshText()
 		{
-			Debug.Log("RefreshText");
-
 			OnRefreshText();
 		}
 
