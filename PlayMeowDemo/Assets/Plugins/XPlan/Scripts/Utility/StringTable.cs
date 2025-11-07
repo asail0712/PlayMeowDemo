@@ -74,9 +74,11 @@ namespace XPlan.Utility
 
 		public void InitialUIText(GameObject uiGO)
 		{
-            TextKeyMapper comp		= uiGO.AddOrFindComponent<TextKeyMapper>();
-
-            comp.RefreshText();
+            TextKeyMapper textKeycomp	= uiGO.AddOrFindComponent<TextKeyMapper>();
+            I18NSpriteProvider i18Ncomp = uiGO.AddOrFindComponent<I18NSpriteProvider>();
+            
+			textKeycomp.RefreshText();
+            i18Ncomp.RefreshImage();
         }
 
 		public string GetStr(string keyStr)

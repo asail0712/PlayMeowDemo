@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,12 +16,15 @@ namespace XPlan.UI
         [SerializeField] private Image image;
         [SerializeField] private string fileName;
 
+        [SerializeField] private Dictionary<string, Sprite> imageCache;
+
         private MonoBehaviourHelper.MonoBehavourInstance mbIns;
 
         public ImageMapper(Image image, string fileName)
         {
             this.image      = image;
             this.fileName   = fileName;
+            this.imageCache = new Dictionary<string, Sprite>();
             this.mbIns      = null;
         }
 
@@ -30,10 +33,17 @@ namespace XPlan.UI
             int currLang    = UIController.Instance.CurrLanguage;
             string loadName = $"{fileName}_{currLang}.png";
 
-            // StreamingAssets §¹¾ã¸ô®|
+            // StreamingAssets å®Œæ•´è·¯å¾‘
             string fullPath = Path.Combine(Application.streamingAssetsPath, "I18N", loadName);
 
-            if(mbIns != null)
+            // å…ˆæª¢æŸ¥ Cache
+            if (imageCache.TryGetValue(fullPath, out Sprite cachedSp))
+            {
+                image.sprite = cachedSp;
+                return;
+            }
+
+            if (mbIns != null)
             {
                 mbIns.StopCoroutine();
                 mbIns = null;
@@ -50,26 +60,27 @@ namespace XPlan.UI
 
                 if (req.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogWarning($"[ImageMapper] ¸ü¤J¥¢±Ñ: {fullPath}");
+                    Debug.LogWarning($"[ImageMapper] è¼‰å…¥å¤±æ•—: {fullPath}");
                     yield break;
                 }
 
                 Texture2D tex = DownloadHandlerTexture.GetContent(req);
 
-                // Âà¦¨ Sprite
+                // è½‰æˆ Sprite
                 Sprite sp = Sprite.Create(
                     tex,
                     new Rect(0, 0, tex.width, tex.height),
                     new Vector2(0.5f, 0.5f),
-                    100f // Pixel Per Unit ¥i¨Ì UI ³]©w½Õ
+                    100f // Pixel Per Unit å¯ä¾ UI è¨­å®šèª¿
                 );
 
-                image.sprite = sp;
+                imageCache[fullPath]    = sp;   // å­˜å…¥ Cache
+                image.sprite            = sp;   // å¥—ç”¨
             }
         }
     }
 
-    public class LocaleSpriteProvider : MonoBehaviour
+    public class I18NSpriteProvider : MonoBehaviour
     {
         [SerializeField] private List<ImageMapper> imgMapper;
 
@@ -88,6 +99,11 @@ namespace XPlan.UI
                     imgMapper.Add(new ImageMapper(img, img.name.Substring(I18N.Length)));
                 }
             }
+        }
+
+        public void RefreshImage()
+        {
+            imgMapper.ForEach(e04 => e04.Refresh());
         }
     }
 }

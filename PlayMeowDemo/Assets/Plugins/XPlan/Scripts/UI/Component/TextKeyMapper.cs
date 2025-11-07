@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -79,15 +79,8 @@ namespace XPlan.UI
 
         public void RefreshText()
         {
-            foreach (TextMap textMap in textMapper)
-            {
-                textMap.Refresh();               
-            }
-           
-            foreach (TmpMap tmpMap in tmpMapper)
-            {
-                tmpMap.Refresh();
-            }
+            textMapper.ForEach(e04 => e04.Refresh());
+            tmpMapper.ForEach(e04 => e04.Refresh());
         }
     }
 }
