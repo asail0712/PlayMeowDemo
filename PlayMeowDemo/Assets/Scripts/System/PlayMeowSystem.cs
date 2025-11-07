@@ -30,15 +30,33 @@ namespace PlayMeowDemo
         }
 
         [ContextMenu("更換語系為中文")]
-        private void SendLoginDeny11()
+        private void SendLanguageChangeCHT()
         {
             UIController.Instance.CurrLanguage = 0;
         }
 
         [ContextMenu("更換語系為英文")]
-        private void SendLoginDeny22()
+        private void SendLanguageChangeENG()
         {
             UIController.Instance.CurrLanguage = 1;
+        }
+
+        [ContextMenu("更換Quality為Low")]
+        private void SendQualityChangeLow()
+        {
+            UIController.Instance.CurrQuality = 0;
+        }
+
+        [ContextMenu("更換Quality為Medium")]
+        private void SendQualityChangeMedium()
+        {
+            UIController.Instance.CurrQuality = 1;
+        }
+
+        [ContextMenu("更換Quality為High")]
+        private void SendQualityChangeHigh()
+        {
+            UIController.Instance.CurrQuality = 2;
         }
     }
 }
