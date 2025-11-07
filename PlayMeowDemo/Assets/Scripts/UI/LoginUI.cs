@@ -73,6 +73,17 @@ namespace PlayMeowDemo
             Initialized();
         }
 
+        private void OnDisable()
+        {
+            if (_errorNotifyRoutine != null)
+            {
+                StopCoroutine(_errorNotifyRoutine);
+
+                _errorTxt.text      = "";
+                _errorNotifyRoutine = null;
+            }
+        }
+
         // 初始化輸入框與錯誤訊息
         private void Initialized()
         {
@@ -102,6 +113,11 @@ namespace PlayMeowDemo
                 
                 _errorTxt.text      = "";
                 _errorNotifyRoutine = null;
+            }
+
+            if(!gameObject.activeSelf)
+            {
+                return;
             }
 
             _errorNotifyRoutine = StartCoroutine(ChangeErrorMsg(errorStr));
