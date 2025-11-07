@@ -11,15 +11,6 @@ using XPlan.Utility;
 
 namespace PlayMeowDemo 
 {
-    public enum LoginError
-    {
-        None        = 0,
-        NoAccount,
-        NoPW,
-        NotEmail,
-        AccountOrPWDeny,
-    }
-
     public class LoginUI : UIBase
     {
         [Header("登入按鈕")]
@@ -54,7 +45,7 @@ namespace PlayMeowDemo
             /******************************
              * 初始化
              * ***************************/
-            ChangeErrorMsg(LoginError.None);
+            NotifyError("");
 
             /******************************
              * 使用者對View的操作
@@ -78,9 +69,9 @@ namespace PlayMeowDemo
                 ToggleUI(gameObject, true);
             });
 
-            ListenCall<LoginError>(UICommand.ShowLoginError, (error) => 
+            ListenCall<string>(UICommand.ShowLoginError, (errorStr) => 
             {
-                NotifyError(error);
+                NotifyError(errorStr);
             });
         }
 
@@ -89,93 +80,44 @@ namespace PlayMeowDemo
             /******************************
              * 初始化
              * ***************************/
-            ChangeErrorMsg(LoginError.None);
+            NotifyError("");
         }
 
         private void Logining()
         {
-            NotifyError(LoginError.None);
+            NotifyError("");
 
             string account  = _accountTxt.text;
             string pw       = _pwTxt.text;
 
-            if (string.IsNullOrEmpty(account))
-            {
-                NotifyError(LoginError.NoAccount);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(pw))
-            {
-                NotifyError(LoginError.NoPW);
-                return;
-            }
-
-            // input field 的ContentType設定為email時，會造成iOS手寫輸入異常 
-            // 因此建議設定為standard然後在代碼裡面檢查
-            if (!account.IsValidEmail())
-            {
-                NotifyError(LoginError.NotEmail);
-                return;
-            }
-
             DirectTrigger<(string, string)>(UIRequest.Login, (account, pw));
         }
 
-        private void NotifyError(LoginError error)
+        private void NotifyError(string errorStr)
         {
             if(errorNotifyRoutine != null)
             {
                 StopCoroutine(errorNotifyRoutine);
-                ChangeErrorMsg(LoginError.None);
+                
+                _errorTxt.text      = "";
+                errorNotifyRoutine  = null;
             }
-
-            errorNotifyRoutine = StartCoroutine(NotifyError_Internal(error));
+            
+            errorNotifyRoutine  = StartCoroutine(ChangeErrorMsg(errorStr));
         }
 
-        private IEnumerator NotifyError_Internal(LoginError error)
+        private IEnumerator ChangeErrorMsg(string errorStr)
         {
-            ChangeErrorMsg(error);
+            _errorTxt.text = errorStr;
+
+            if(string.IsNullOrEmpty(errorStr))
+            {
+                yield break;
+            }
 
             yield return new WaitForSeconds(Error_ShowTime);
 
-            ChangeErrorMsg(LoginError.None);
-        }
-
-        private void ChangeErrorMsg(LoginError error)
-        {
-            switch (error)
-            {
-                case LoginError.None:
-                    _errorTxt.text = "";
-                    break;
-                case LoginError.NoAccount:
-                    _errorTxt.text = GetStr("KEY_NoAccount");
-                    break;
-                case LoginError.NoPW:
-                    _errorTxt.text = GetStr("KEY_NoPW");
-                    break;
-                case LoginError.NotEmail:
-                    _errorTxt.text = GetStr("KEY_NotEmail");
-                    break;
-                case LoginError.AccountOrPWDeny:
-                    _errorTxt.text = GetStr("KEY_AccountOrPWDeny");
-                    break;
-            }
-        }
-
-        [ContextMenu("Show Login UI")]
-        private void ShowLoginUI()
-        {
-            LogSystem.Record("使用者要求開啟Login UI");
-
-            UISystem.DirectCall(UICommand.ShowLogin);
-        }
-
-        [ContextMenu("Send Login Deny")]
-        private void SendLoginDeny()
-        {
-            UISystem.DirectCall<LoginError>(UICommand.ShowLoginError, LoginError.AccountOrPWDeny);
+            _errorTxt.text = "";
         }
     }
 }
