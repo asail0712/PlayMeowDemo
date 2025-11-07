@@ -100,22 +100,22 @@ namespace PlayMeowDemo
                     msg = "";
                     break;
                 case LoginError.NoAccount:
-                    msg = UIController.Instance.GetStr("KEY_NoAccount");
+                    msg = GetStr("KEY_NoAccount");
                     break;
                 case LoginError.NoPw:
-                    msg = UIController.Instance.GetStr("KEY_NoPW");
+                    msg = GetStr("KEY_NoPW");
                     break;
                 case LoginError.NotEmail:
-                    msg = UIController.Instance.GetStr("KEY_NotEmail");
+                    msg = GetStr("KEY_NotEmail");
                     break;
                 case LoginError.PwTooShort:
-                    msg = UIController.Instance.GetStr("KEY_PwTooShort");
+                    msg = GetStr("KEY_PwTooShort");
                     break;
                 case LoginError.AccountOrPWDeny:
-                    msg = UIController.Instance.GetStr("KEY_AccountOrPWDeny");
+                    msg = GetStr("KEY_AccountOrPWDeny");
                     break;
                 default:
-                    msg = UIController.Instance.GetStr("KEY_OtherError");
+                    msg = GetStr("KEY_OtherError");
                     break;
             }
 

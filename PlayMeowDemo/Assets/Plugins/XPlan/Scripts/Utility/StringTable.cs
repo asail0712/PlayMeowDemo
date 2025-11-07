@@ -74,24 +74,10 @@ namespace XPlan.Utility
 
 		public void InitialUIText(GameObject uiGO)
 		{
-            if (!uiGO.TryGetComponent<TextKeyMapper>(out TextKeyMapper comp))
-            {
-                uiGO.AddComponent<TextKeyMapper>();
-            }
+            TextKeyMapper comp		= uiGO.AddOrFindComponent<TextKeyMapper>();
 
-            Text[] textComponents = uiGO.GetComponentsInChildren<Text>(true);
-
-			foreach (Text textComponent in textComponents)
-			{				
-				textComponent.text = GetStr(textComponent.text);
-			}
-
-			TextMeshProUGUI[] tmpTextComponents = uiGO.GetComponentsInChildren<TextMeshProUGUI>(true);
-			foreach (TextMeshProUGUI tmpText in tmpTextComponents)
-			{
-				tmpText.text = GetStr(tmpText.text);
-			}
-		}
+            comp.RefreshText();
+        }
 
 		public string GetStr(string keyStr)
 		{
