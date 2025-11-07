@@ -70,9 +70,6 @@ namespace PlayMeowDemo
         // UI 每次啟用時的初始狀態
         private void OnEnable()
         {
-            /******************************
-             * 初始化
-             * ***************************/
             Initialized();
         }
 
@@ -126,6 +123,15 @@ namespace PlayMeowDemo
             yield return new WaitForSeconds(CommonDefine.ErrorShowTime);
 
             _errorTxt.text = "";
+        }
+
+        /********************************
+         * I18N相關處理
+         * *****************************/
+        protected override void OnRefreshText()
+        {
+            // 更換語系時同時觸發初始化
+            Initialized();
         }
     }
 }
