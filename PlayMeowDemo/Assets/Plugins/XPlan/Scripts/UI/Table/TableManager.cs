@@ -68,12 +68,12 @@ namespace XPlan.UI.Component
 		 * **************************************/
 		protected void DirectTrigger<T>(string uniqueID, T param, Action<T> onPress = null)
 		{
-			UISystem.TriggerCallback<T>(uniqueID, param, onPress);
+			UIEventBus.TriggerCallback<T>(uniqueID, param, onPress);
 		}
 
 		protected void DirectTrigger(string uniqueID, Action onPress = null)
 		{
-			UISystem.TriggerCallback(uniqueID, onPress);
+			UIEventBus.TriggerCallback(uniqueID, onPress);
 		}
 
 		protected virtual void OnRefresh(TableItemInfo info)

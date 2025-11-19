@@ -12,6 +12,7 @@ namespace PlayMeowDemo
         protected override void OnInitialLogic()
         {
             RegisterLogic(new LoginPresenter());
+            RegisterLogic(new LoginViewModel());
         }
 
         /*****************************************

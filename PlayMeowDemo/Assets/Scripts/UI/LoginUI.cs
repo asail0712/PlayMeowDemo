@@ -19,8 +19,6 @@ namespace PlayMeowDemo
         [Header("輸入欄位")]
         [SerializeField] private InputField _accountTxt;
         [SerializeField] private InputField _pwTxt;
-        [SerializeField] private Image _accountRoll;        // 帳號欄位聚焦時的 UI 響應
-        [SerializeField] private Image _pwRoll;             // 密碼欄位聚焦時的 UI 響應
 
         [Header("錯誤訊息處理")]
         [SerializeField] private Text _errorTxt;

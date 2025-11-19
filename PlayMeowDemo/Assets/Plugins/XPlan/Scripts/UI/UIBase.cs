@@ -39,7 +39,7 @@ namespace XPlan.UI
 		* *****************************/
         public void ListenCall(string id, ListenOption option, Action<UIParam[]> paramAction)
 		{
-			UISystem.ListenCall(id, this, option, (paramList) =>
+			UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				paramAction?.Invoke(paramList);
 			});
@@ -47,7 +47,7 @@ namespace XPlan.UI
 
 		public void ListenCall<T>(string id, ListenOption option, Action<T> paramAction)
 		{
-			UISystem.ListenCall(id, this, option, (paramList) =>
+			UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				paramAction?.Invoke(paramList[0].GetValue<T>());
 			});
@@ -55,7 +55,7 @@ namespace XPlan.UI
 
 		public void ListenCall(string id, ListenOption option, Action noParamAction)
 		{
-			UISystem.ListenCall(id, this, option, (paramList) =>
+			UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				noParamAction?.Invoke();
 			});
@@ -176,7 +176,7 @@ namespace XPlan.UI
 		{
 			toggle.onValueChanged.AddListener((bOn) =>
 			{
-				UISystem.TriggerCallback<bool>(uniqueID, bOn, onPress);
+				UIEventBus.TriggerCallback<bool>(uniqueID, bOn, onPress);
 			});
 		}
 
@@ -207,7 +207,7 @@ namespace XPlan.UI
 
 					int idx = Array.IndexOf(toggleArr, toggle);
 
-					UISystem.TriggerCallback<int>(uniqueID, idx, onPress);
+					UIEventBus.TriggerCallback<int>(uniqueID, idx, onPress);
 				});
 			}
 		}
@@ -270,14 +270,14 @@ namespace XPlan.UI
 			{
 				onPress?.Invoke(val, pointTrigger);
 
-				UISystem.TriggerCallback<bool>(uniqueID, true, null);
+				UIEventBus.TriggerCallback<bool>(uniqueID, true, null);
 			};
 
 			pointTrigger.OnPointUp += (val) =>
 			{
 				onPull?.Invoke(val, pointTrigger);
 
-				UISystem.TriggerCallback<bool>(uniqueID, false, null);
+				UIEventBus.TriggerCallback<bool>(uniqueID, false, null);
 			};
 		}
 
@@ -289,25 +289,25 @@ namespace XPlan.UI
             {
                 onEnter?.Invoke(val, pointTrigger);
 
-                UISystem.TriggerCallback<bool>(uniqueID, true, null);
+                UIEventBus.TriggerCallback<bool>(uniqueID, true, null);
             };
 
             pointTrigger.OnPointExit += (val) =>
             {
                 onExit?.Invoke(val, pointTrigger);
 
-                UISystem.TriggerCallback<bool>(uniqueID, false, null);
+                UIEventBus.TriggerCallback<bool>(uniqueID, false, null);
             };
         }
 
 		protected void DirectTrigger<T>(string uniqueID, T param, Action<T> onPress = null)
 		{
-			UISystem.TriggerCallback<T>(uniqueID, param, onPress);
+			UIEventBus.TriggerCallback<T>(uniqueID, param, onPress);
 		}
 
 		protected void DirectTrigger(string uniqueID, Action onPress = null)
 		{
-			UISystem.TriggerCallback(uniqueID, onPress);
+			UIEventBus.TriggerCallback(uniqueID, onPress);
 		}
 
 		/********************************
@@ -315,7 +315,7 @@ namespace XPlan.UI
 		* *****************************/
 		protected void AddUIListener<T>(string uniqueID, Action<T> callback)
 		{
-			UISystem.RegisterCallback(uniqueID, this, (param) =>
+			UIEventBus.RegisterCallback(uniqueID, this, (param) =>
 			{
 				callback?.Invoke(param.GetValue<T>());
 			});
@@ -323,7 +323,7 @@ namespace XPlan.UI
 
 		protected void AddUIListener(string uniqueID, Action callback)
 		{
-			UISystem.RegisterCallback(uniqueID, this, (dump) =>
+			UIEventBus.RegisterCallback(uniqueID, this, (dump) =>
 			{
 				callback?.Invoke();
 			});
@@ -343,8 +343,8 @@ namespace XPlan.UI
 		{
 			OnDispose();
 
-			UISystem.UnlistenAllCall(this);
-			UISystem.UnregisterAllCallback(this);
+			UIEventBus.UnlistenAllCall(this);
+			UIEventBus.UnregisterAllCallback(this);
 		}
 
 		protected virtual void OnDispose()
