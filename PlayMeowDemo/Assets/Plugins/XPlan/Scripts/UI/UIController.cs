@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using XPlan.UI.Components;
 using XPlan.Utility;
 
 namespace XPlan.UI
@@ -30,7 +31,7 @@ namespace XPlan.UI
 		public int rootIdx;
 		public int referCount;
 		public string uiName;
-        public List<UIBase> uiList;
+        public List<IUIView> uiList;
 
 		public UIVisibleInfo(GameObject u, string s, int r, int i)
 		{
@@ -38,7 +39,7 @@ namespace XPlan.UI
 			uiName			= s;
 			referCount		= r;
 			rootIdx			= i;
-            uiList          = uiIns.GetComponents<UIBase>().ToList();
+            uiList          = uiIns.GetInterfaces<IUIView>();
         }
 	}
 
@@ -95,24 +96,33 @@ namespace XPlan.UI
 		 * ************************************/
 		private void InitialStaticUI()
 		{
-			List<GameObject> uiGOList	= new List<GameObject>();
-			List<UIBase> uiList			= new List<UIBase>();
+            if (uiRootList == null || uiRootList.Count == 0) return;
 
-			foreach (GameObject uiRoot in uiRootList)
-			{
-				uiList.AddRange(uiRoot.GetComponentsInChildren<UIBase>().ToList());
-			}
+            // 用 HashSet 去重，比 List.AddUnique 更快更乾淨
+            HashSet<GameObject> uiGOSet = new HashSet<GameObject>();
 
-			// 初始化
-			foreach (UIBase ui in uiList)
-			{
-				uiGOList.AddUnique<GameObject>(ui.gameObject);
+            // 蒐集所有 IUIView，初始化，並同時收集對應的 GameObject
+            foreach (var uiRoot in uiRootList)
+            {
+                if (!uiRoot) continue;
 
-				ui.InitialUI(-1);
-			}
+                // 這裡用你前面做好的介面搜尋工具
+                var views = uiRoot.GetInterfacesInChildren<IUIView>();
+                foreach (var view in views)
+                {
+                    // 以 Component 來取得 gameObject；避免假設 IUIView 介面本身有 gameObject 屬性
+                    var comp = view as Component;
+                    if (comp)
+                    {
+                        uiGOSet.Add(comp.gameObject);
+                    }
+
+                    view.InitialUI(-1);
+                }
+            }
 
 			// 設定字表
-			foreach (GameObject ui in uiGOList)
+			foreach (GameObject ui in uiGOSet)
 			{
 				stringTable.InitialUIText(ui);
 			}
@@ -173,16 +183,16 @@ namespace XPlan.UI
 					RefreshQuality(uiIns);
 
                     // 初始化所有的 ui base
-                    UIBase[] newUIList = uiIns.GetComponents<UIBase>();
+                    List<IUIView> newUIList = uiIns.GetInterfaces<IUIView>();
 
 					if (newUIList == null)
 					{
-						LogSystem.Record("uiBase is null !", LogType.Error);
+						LogSystem.Record("View is null !", LogType.Error);
 
 						continue;
 					}
 
-					foreach (UIBase newUI in newUIList)
+					foreach (IUIView newUI in newUIList)
 					{
 						newUI.InitialUI(loadingInfo.sortIdx);
 					}
@@ -200,12 +210,12 @@ namespace XPlan.UI
 				}
 				else
 				{
-					UIVisibleInfo vInfo = currVisibleList[idx];
+					UIVisibleInfo vInfo		= currVisibleList[idx];
 					++vInfo.referCount;
-					uiIns				= vInfo.uiIns;
-					UIBase[] newUIList	= uiIns.GetComponents<UIBase>();
+					uiIns					= vInfo.uiIns;
+					List<IUIView> newUIList	= uiIns.GetInterfaces<IUIView>();
 
-					foreach (UIBase newUI in newUIList)
+                    foreach (IUIView newUI in newUIList)
 					{
 						newUI.SortIdx = loadingInfo.sortIdx;
 					}
@@ -264,8 +274,8 @@ namespace XPlan.UI
 			// 依照sort idx大小由大向小排列
 			sortUIList.Sort((X, Y)=>
 			{
-				UIBase XUI = X.uiIns.GetComponent<UIBase>();
-				UIBase YUI = Y.uiIns.GetComponent<UIBase>();
+                IUIView XUI = X.uiIns.GetInterface<IUIView>();
+                IUIView YUI = Y.uiIns.GetInterface<IUIView>();
 
 				return XUI.SortIdx < YUI.SortIdx ?-1:1;
 			});
@@ -320,49 +330,10 @@ namespace XPlan.UI
 			loaderStack.Remove(loader);
 		}
 
-		public bool IsWorkingUI(UIBase ui)
-		{
-			if(loaderStack.Count == 0 && persistentUIList.Count == 0)
-			{
-				return false;
-			}
-
-			// 判斷只有在stack頂層的UI需要做驅動，其他的都視為休息中
-            // 先判斷常駐UI
-			foreach(UIVisibleInfo uiInfo in persistentUIList)
-			{
-				List<UIBase> uiList = uiInfo.uiList;
-
-				if (uiList.Contains(ui))
-				{
-					return true;
-				}
-			}
-			
-            // 判斷非常駐UI中最新的UILoader
-			UILoader lastUILoader = loaderStack[loaderStack.Count - 1];
-
-			foreach (UILoadingInfo loadingInfo in lastUILoader.GetLoadingList())
-			{
-				UIBase[] uiList = loadingInfo.uiList;
-				bool bIsExist   = Array.Exists(uiList, (X) => 
-				{
-					return X.GetType() == ui.GetType();
-				});
-
-				if(bIsExist)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		/**************************************
 		 * UI顯示與隱藏
 		 * ************************************/
-		public void SetUIVisible<T>(bool bEnable) where T : UIBase
+		public void SetUIVisible<T>(bool bEnable) where T : IUIView
 		{
 			List<UIVisibleInfo> allUIList = new List<UIVisibleInfo>();
 			allUIList.AddRange(currVisibleList);
@@ -372,9 +343,9 @@ namespace XPlan.UI
 
 			foreach (UIVisibleInfo uiInfo in allUIList)
 			{
-				List<UIBase> uiList = uiInfo.uiIns.GetComponents<UIBase>().ToList();
+				List<IUIView> uiList = uiInfo.uiIns.GetInterfaces<IUIView>();
 
-				foreach (UIBase ui in uiList)
+				foreach (IUIView ui in uiList)
 				{ 
 					if(ui is T)
 					{

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 using XPlan.Utility;
 
-namespace XPlan.UI
+namespace XPlan.UI.Components
 {
     [Serializable]
     public class QualityMapper

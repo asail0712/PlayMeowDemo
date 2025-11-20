@@ -25,8 +25,8 @@ namespace XPlan.UI
 		}
 	}
 
-	public class UIBase : MonoBehaviour, IUIListener
-	{
+	public class UIBase : MonoBehaviour, IUIListener, IUIView
+    {
         /********************************
 		* Listen Handler Call
 		* *****************************/

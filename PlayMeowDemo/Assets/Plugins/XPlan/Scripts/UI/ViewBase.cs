@@ -24,7 +24,7 @@ namespace XPlan.UI
         public MethodInfo ForceNotify;
     }
 
-    public class ViewBase<TViewModel> : MonoBehaviour where TViewModel : ViewModelBase
+    public class ViewBase<TViewModel> : MonoBehaviour, IUIView where TViewModel : ViewModelBase
     {
         private TViewModel _viewModel;                                                                          // viewmodel本體
         private readonly List<IDisposable> _disposables                         = new();                        // 解除訂閱集中管理
@@ -494,5 +494,15 @@ namespace XPlan.UI
 
             return (IDisposable)mi.Invoke(opInstance, new object[] { del });
         }
+
+        /****************************************
+         * 實作IUIView
+         * **************************************/
+        public void InitialUI(int idx)
+        {
+            SortIdx = idx;
+        }
+
+        public int SortIdx { get; set; }
     }
 }

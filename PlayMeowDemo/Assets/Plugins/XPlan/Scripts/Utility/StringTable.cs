@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using XPlan.UI;
+using XPlan.UI.Components;
 
 namespace XPlan.Utility
 {
@@ -77,7 +78,7 @@ namespace XPlan.Utility
             TextKeyMapper textKeycomp	= uiGO.AddOrFindComponent<TextKeyMapper>();
             I18NSpriteProvider i18Ncomp = uiGO.AddOrFindComponent<I18NSpriteProvider>();
             
-			textKeycomp.RefreshText();
+			textKeycomp.RefreshText(this);
             i18Ncomp.RefreshImage();
         }
 
