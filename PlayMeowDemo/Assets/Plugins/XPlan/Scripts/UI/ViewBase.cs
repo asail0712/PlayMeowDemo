@@ -5,15 +5,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using XPlan.UI.Fade;
 
 namespace XPlan.UI
 {
     // 可覆寫綁定名稱（預設由欄位名推導）
+    // 名稱為 BindName
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class BindNameAttribute : Attribute
     {
         public string Name { get; }
         public BindNameAttribute(string name) => Name = name;
+    }
+
+    // 標記此欄位要參與「可見性綁定」(Visible) 的掃描。
+    // 可選 name 參數可覆寫預設的 DeriveBaseName(f.Name)。
+    // 名稱為 BindVisibleTarget
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    public sealed class BindVisibleTargetAttribute : Attribute
+    {
+        public string Name { get; }
+        public BindVisibleTargetAttribute(string name = null) => Name = name;
     }
 
     public sealed class ObservableBinding
@@ -46,6 +58,9 @@ namespace XPlan.UI
 
                 // 最後綁訂閱（VM→UI）
                 AutoBindObservables();
+
+                // ★ 新增：VM→UI（Visible）
+                AutoBindVisibility();   
             });
         }
 
@@ -502,6 +517,137 @@ namespace XPlan.UI
         public void RefreshLanguage()
         {
 
+        }
+
+        /*********************************************************************************
+        * 綁定 ViewModel 的 *{BaseName}Visible* 與 *Visible*（根）到對應的 UI 物件／本體。
+        *********************************************************************************/
+        private void AutoBindVisibility()
+        {
+            // 1) 建 UI 映射：欄位→物件（包含 GameObject 與常見 UI 元件）
+            Dictionary<string, GameObject> viewUiMap = BuildSerializedUiMapForVisibility();
+
+            // 2) 針對每個 UI 欄位：找 {BaseName}Visible → bool
+            foreach (var kv in viewUiMap)
+            {
+                string baseName     = kv.Key;
+                GameObject targetGO = kv.Value;             // 統一是 GameObject
+                string visibleKey   = baseName + "Visible"; // 例：Abc + Visible → abcVisible
+
+                if (_vmObservableMap.TryGetValue(visibleKey, out var bind) && bind.ValueType == typeof(bool))
+                {
+                    // 訂閱 VM→UI：切換此欄位對應的 GO
+                    var disp = Subscribe<bool>(bind.OpInstance, v => ToggleUI(targetGO, v));
+                    _disposables.Add(disp);
+
+                    // 初值推送
+                    bind.ForceNotify?.Invoke(bind.OpInstance, null);
+                }
+            }
+
+            // 3) 根物件（View 本體）可綁 Visible
+            if (_vmObservableMap.TryGetValue("UiVisible", out var rootBind) && rootBind.ValueType == typeof(bool))
+            {
+                var rootGO  = this.gameObject;
+                var disp    = Subscribe<bool>(rootBind.OpInstance, v => ToggleUI(rootGO, v));
+                _disposables.Add(disp);
+
+                rootBind.ForceNotify?.Invoke(rootBind.OpInstance, null);
+            }
+        }
+
+        // 供 Visible 綁定使用：把 [SerializeField] 欄位整理成 BaseName→GameObject。
+        // 支援：GameObject、Button、Toggle、InputField、Slider、Text（需要時可自行擴充）        
+        private Dictionary<string, GameObject> BuildSerializedUiMapForVisibility()
+        {
+            var map     = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+            var fields  = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            foreach (var f in fields)
+            {
+                // 只處理有 [BindVisibleTarget] 的欄位
+                var attr = f.GetCustomAttribute<BindVisibleTargetAttribute>();
+                if (attr == null) continue;
+
+                var obj = f.GetValue(this);
+                if (obj == null) continue;
+
+                GameObject go = null;
+
+                if (obj is GameObject goField)
+                {
+                    go = goField;
+                }
+                else if (obj is Component comp)
+                {
+                    go = comp != null ? comp.gameObject : null;
+                }
+
+                if (go == null) continue;
+
+                // 取 key：優先屬性覆寫，否則用 DeriveBaseName
+                var key     = string.IsNullOrEmpty(attr.Name)
+                            ? DeriveBaseName(f.Name)
+                            : attr.Name;
+                map[key]    = go;                    // Abc → 該欄位所在 GO
+            }
+
+            return map;
+        }
+
+        /***************************************
+		 * UI Visible
+		 * *************************************/
+        private void ToggleUI(GameObject ui, bool bEnabled)
+        {
+            // 狀態一致 不需要改變
+            if (ui.activeSelf == bEnabled)
+            {
+                return;
+            }
+
+            FadeBase[] fadeList = ui.GetComponents<FadeBase>();
+
+            if (fadeList == null || fadeList.Length == 0)
+            {
+                ui.SetActive(bEnabled);
+                return;
+            }
+
+            if (bEnabled)
+            {
+                ui.SetActive(true);
+
+                Array.ForEach<FadeBase>(fadeList, (fadeComp) =>
+                {
+                    if (fadeComp == null)
+                    {
+                        return;
+                    }
+
+                    fadeComp.PleaseStartYourPerformance(true, null);
+                });
+            }
+            else
+            {
+                int finishCounter = 0;
+
+                Array.ForEach<FadeBase>(fadeList, (fadeComp) =>
+                {
+                    if (fadeComp == null)
+                    {
+                        return;
+                    }
+
+                    fadeComp.PleaseStartYourPerformance(false, () =>
+                    {
+                        if (++finishCounter == fadeList.Length)
+                        {
+                            ui.SetActive(false);
+                        }
+                    });
+                });
+            }
         }
     }
 }

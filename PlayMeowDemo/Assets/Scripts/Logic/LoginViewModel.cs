@@ -12,6 +12,7 @@ namespace PlayMeowDemo
     {
         private ObservableProperty<string> _account     = new ObservableProperty<string>();
         private ObservableProperty<string> _pw          = new ObservableProperty<string>();
+        private ObservableProperty<bool> _uiVisible     = new(true);
         private ObservableProperty<string> _errorMsg    = new ObservableProperty<string>();
 
         private Coroutine _errorNotifyRoutine;              // 控制錯誤訊息顯示的 Coroutine
@@ -20,6 +21,10 @@ namespace PlayMeowDemo
         public LoginViewModel()
             : base()
         {
+            RegisterNotify<ShowLoginMsg>((dummy) =>
+            {
+                _uiVisible.Value = true;
+            });
         }
 
         /****************************************
@@ -58,6 +63,8 @@ namespace PlayMeowDemo
         private void OnCloseClick()
         {
             Debug.Log("OnCloseClick");
+
+            _uiVisible.Value = false;
         }
 
         private void OnAccountChange(string account)
