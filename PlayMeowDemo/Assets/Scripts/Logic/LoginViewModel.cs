@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+
 using XPlan;
 using XPlan.UI;
+using XPlan.Utility;
 
 namespace PlayMeowDemo 
 {
@@ -15,16 +16,81 @@ namespace PlayMeowDemo
         private ObservableProperty<bool> _uiVisible     = new(true);
         private ObservableProperty<string> _errorMsg    = new ObservableProperty<string>();
 
-        private Coroutine _errorNotifyRoutine;              // 控制錯誤訊息顯示的 Coroutine
+        private int _errorNotifyRoutine                 = -1; // 控制錯誤訊息顯示的 Coroutine
 
         // Start is called before the first frame update
         public LoginViewModel()
             : base()
         {
+            RegisterNotify<LoginErrorMsg>((msg) =>
+            {
+                ShowError(msg.error);                
+            });
+
             RegisterNotify<ShowLoginMsg>((dummy) =>
             {
                 _uiVisible.Value = true;
             });
+        }
+
+        private void ShowError(LoginError error)
+        {
+            if(_errorNotifyRoutine != -1)
+            {
+                StopCoroutine(_errorNotifyRoutine);
+            }
+
+            _errorNotifyRoutine = StartCoroutine(ShowError_Imp(error));
+        }
+
+        private IEnumerator ShowError_Imp(LoginError error)
+        {
+            _errorMsg.Value = GetErrorMsg(error);
+
+            if (string.IsNullOrEmpty(_errorMsg.Value))
+            {
+                yield break;
+            }
+
+            LogSystem.Record($"登入錯誤: {_errorMsg.Value}", LogType.Warning);
+
+            yield return new WaitForSeconds(CommonDefine.ErrorShowTime);
+
+            _errorMsg.Value = "";
+        }
+
+        // 依照錯誤列舉取得多語系字串（Key → 字串）
+        // 實際顯示的內容由 GetStr(key) 取得
+        private string GetErrorMsg(LoginError error)
+        {
+            string msg = string.Empty;
+
+            switch (error)
+            {
+                case LoginError.None:
+                    msg = string.Empty;
+                    break;
+                case LoginError.NoAccount:
+                    msg = GetStr("KEY_NoAccount");
+                    break;
+                case LoginError.NoPw:
+                    msg = GetStr("KEY_NoPW");
+                    break;
+                case LoginError.NotEmail:
+                    msg = GetStr("KEY_NotEmail");
+                    break;
+                case LoginError.PwTooShort:
+                    msg = GetStr("KEY_PwTooShort");
+                    break;
+                case LoginError.AccountOrPWDeny:
+                    msg = GetStr("KEY_AccountOrPWDeny");
+                    break;
+                default:
+                    msg = GetStr("KEY_OtherError");
+                    break;
+            }
+
+            return msg;
         }
 
         /****************************************
@@ -32,49 +98,82 @@ namespace PlayMeowDemo
          * **************************************/
         private void OnLoginClick()
         {
-            Debug.Log($"OnLoginClick {_account.Value} / {_pw.Value}");
+            string account  = _account.Value;
+            string pw       = _pw.Value;
+
+            // 檢查：帳號是否為空
+            if (string.IsNullOrEmpty(account))
+            {
+                ShowError(LoginError.NoAccount);
+                return;
+            }
+
+            // 檢查：密碼是否為空
+            if (string.IsNullOrEmpty(pw))
+            {
+                ShowError(LoginError.NoPw);
+                return;
+            }
+
+            // 提醒：
+            // InputField 的 ContentType 在 iOS 設為 Email 時，可能影響手寫輸入功能；
+            // 建議以 Standard 輸入並在程式端自行檢查格式。
+            if (!account.IsValidEmail())
+            {
+                ShowError(LoginError.NotEmail);
+                return;
+            }
+
+            // 檢查：密碼長度是否足夠
+            if (pw.Length < CommonDefine.PwMinLen)
+            {
+                ShowError(LoginError.PwTooShort);
+                return;
+            }
+
+            LogSystem.Record($"使用者要求登入, 帳號為 {account}, 密碼為 {pw}");
         }
 
         private void OnGoogleLoginClick()
         {
-            Debug.Log("OnGoogleLoginClick");
+            LogSystem.Record($"使用者要求使用Google登入");
         }
 
         private void OnForgetPWClick()
         {
-            Debug.Log("OnForgetPWClick");
+            LogSystem.Record($"使用者忘記自己的密碼");
         }
 
         private void OnRegNewClick()
         {
-            Debug.Log("OnRegNewClick");
+            LogSystem.Record($"使用者要求註冊新帳號");
         }
 
         private void OnPrivacyClick()
         {
-            Debug.Log("OnPrivacyClick");
+            LogSystem.Record($"使用者要求查看隱私權");
         }
 
         private void OnTcClick()
         {
-            Debug.Log("OnTcClick");
+            LogSystem.Record($"使用者查看服務條款");
         }
 
         private void OnCloseClick()
         {
-            Debug.Log("OnCloseClick");
+            LogSystem.Record($"使用者關掉Login UI");
 
             _uiVisible.Value = false;
         }
 
         private void OnAccountChange(string account)
         {
-            Debug.Log($"OnAccountChange {account}");
+            Debug.Log($"帳號輸入中 {account}");
         }
 
         private void OnPwChange(string pw)
         {
-            Debug.Log($"OnPwChange {pw}");
+            Debug.Log($"密碼輸入中 {pw}");
         }
     }
 }

@@ -122,7 +122,6 @@ namespace PlayMeowDemo
         }
 
         // 錯誤訊息顯示 + 倒數清除
-
         private IEnumerator ChangeErrorMsg(string errorStr)
         {
             _errorTxt.text = errorStr;
