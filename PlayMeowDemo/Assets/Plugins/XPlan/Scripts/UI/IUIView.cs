@@ -2,8 +2,8 @@
 {
     public interface IUIView
     {
-        void InitialUI(int idx);
-
         int SortIdx { get; set; }
+
+        void RefreshLanguage();
     }
 }

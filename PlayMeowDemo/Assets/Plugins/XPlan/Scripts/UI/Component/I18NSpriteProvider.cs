@@ -28,9 +28,9 @@ namespace XPlan.UI.Components
             this.mbIns      = null;
         }
 
-        public void Refresh()
+        public void Refresh(StringTable st)
         {
-            int currLang    = UIController.Instance.CurrLanguage;
+            int currLang    = st.CurrLanguage;
             string loadName = $"{fileName}_{currLang}.png";
 
             // StreamingAssets 完整路徑
@@ -101,9 +101,9 @@ namespace XPlan.UI.Components
             }
         }
 
-        public void RefreshImage()
+        public void RefreshImage(StringTable st)
         {
-            imgMapper.ForEach(e04 => e04.Refresh());
+            imgMapper.ForEach(e04 => e04.Refresh(st));
         }
     }
 }

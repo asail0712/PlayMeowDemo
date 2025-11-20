@@ -142,7 +142,7 @@ namespace PlayMeowDemo
         /********************************
          * I18N相關處理
          * *****************************/
-        protected override void OnRefreshText()
+        protected override void OnRefreshLanguage()
         {
             // 更換語系時同時觸發初始化
             Initialized();

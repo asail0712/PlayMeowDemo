@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 using XPlan.UI.Components;
@@ -117,15 +118,18 @@ namespace XPlan.UI
                         uiGOSet.Add(comp.gameObject);
                     }
 
-                    view.InitialUI(-1);
+                    view.SortIdx = -1;
                 }
             }
-
-			// 設定字表
+			
 			foreach (GameObject ui in uiGOSet)
 			{
-				stringTable.InitialUIText(ui);
-			}
+                // 設定字表
+                stringTable.InitialUIText(ui);
+
+                // 加入 currVisibleList
+                currVisibleList.Add(new UIVisibleInfo(ui, ui.name, 1, 0));
+            }            
 		}
 
 		/**************************************
@@ -194,7 +198,7 @@ namespace XPlan.UI
 
 					foreach (IUIView newUI in newUIList)
 					{
-						newUI.InitialUI(loadingInfo.sortIdx);
+						newUI.SortIdx = loadingInfo.sortIdx;
 					}
 
 					// 確認是否為常駐UI

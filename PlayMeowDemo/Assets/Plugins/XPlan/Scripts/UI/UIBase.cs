@@ -355,21 +355,7 @@ namespace XPlan.UI
 		/********************************
 		 * 初始化
 		 * *****************************/
-
-		private int sortIdx = -1;
-
-		protected virtual void OnInitialUI()
-		{
-			// for overrdie
-		}
-
-		public void InitialUI(int idx)
-		{
-			this.sortIdx = idx;
-			OnInitialUI();
-		}
-
-		public int SortIdx { get => sortIdx; set => sortIdx = value; }
+		public int SortIdx { get; set; }
 
 		/********************************
 		 * 其他
@@ -491,12 +477,12 @@ namespace XPlan.UI
 		/***************************************
 		 * UI文字調整
 		 * *************************************/
-		public void RefreshText()
+		public void RefreshLanguage()
 		{
-			OnRefreshText();
+            OnRefreshLanguage();
 		}
 
-		protected virtual void OnRefreshText()
+		protected virtual void OnRefreshLanguage()
 		{
 
 		}

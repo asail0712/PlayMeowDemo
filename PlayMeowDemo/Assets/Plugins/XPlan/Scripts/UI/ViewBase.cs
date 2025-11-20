@@ -497,12 +497,11 @@ namespace XPlan.UI
 
         /****************************************
          * 實作IUIView
-         * **************************************/
-        public void InitialUI(int idx)
-        {
-            SortIdx = idx;
-        }
-
+         * **************************************/        
         public int SortIdx { get; set; }
+        public void RefreshLanguage()
+        {
+
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace XPlan.Utility
             I18NSpriteProvider i18Ncomp = uiGO.AddOrFindComponent<I18NSpriteProvider>();
             
 			textKeycomp.RefreshText(this);
-            i18Ncomp.RefreshImage();
+            i18Ncomp.RefreshImage(this);
         }
 
 		public string GetStr(string keyStr)
@@ -154,11 +154,11 @@ namespace XPlan.Utility
 			{
 				InitialUIText(uiIns);
 
-				UIBase[] uiList = uiIns.GetComponents<UIBase>();
+                List<IUIView> uiList = uiIns.GetInterfaces<IUIView>();
 
-				foreach (UIBase ui in uiList)
+				foreach (IUIView ui in uiList)
 				{
-					ui.RefreshText();
+					ui.RefreshLanguage();
 				}
 			}
 		}
