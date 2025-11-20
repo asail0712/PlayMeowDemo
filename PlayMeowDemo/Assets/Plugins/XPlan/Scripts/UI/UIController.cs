@@ -62,7 +62,7 @@ namespace XPlan.UI
 			set
 			{
 				currQuality = value;
-				RefreshQuality();
+				QualityChange();
             }
 		}
 
@@ -127,6 +127,9 @@ namespace XPlan.UI
                 // 設定字表
                 stringTable.InitialUIText(ui);
 
+                // 處理Quality
+                RefreshQuality(ui, currQuality);
+
                 // 加入 currVisibleList
                 currVisibleList.Add(new UIVisibleInfo(ui, ui.name, 1, 0));
             }            
@@ -184,7 +187,7 @@ namespace XPlan.UI
 					stringTable.InitialUIText(uiIns);
 
 					// 處理Quality
-					RefreshQuality(uiIns);
+					RefreshQuality(uiIns, currQuality);
 
                     // 初始化所有的 ui base
                     List<IUIView> newUIList = uiIns.GetInterfaces<IUIView>();
@@ -419,18 +422,18 @@ namespace XPlan.UI
         /**************************************
 		 * Quality
 		 * ************************************/
-        private void RefreshQuality()
+        private void QualityChange()
 		{
             List<GameObject> allVisibleUIs = UIController.Instance.GetAllVisibleUI();
 
-			allVisibleUIs.ForEach(e04 => RefreshQuality(e04));
+			allVisibleUIs.ForEach(e04 => RefreshQuality(e04, currQuality));
         }
 
-		private void RefreshQuality(GameObject uiGO)
+		private void RefreshQuality(GameObject uiGO, int quality)
 		{
             QualitySpriteProvider qualityProvider = uiGO.AddOrFindComponent<QualitySpriteProvider>();
 
-            qualityProvider.RefreshImage();
+            qualityProvider.RefreshImage(quality);
         }
     }
 }

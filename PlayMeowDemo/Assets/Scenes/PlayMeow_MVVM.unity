@@ -472,6 +472,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UILoader
       objectReference: {fileID: 0}
+    - target: {fileID: 344009898544130911, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1163274817381225259, guid: acc8c5cb2735ef145a9f3ac75e13ec81, type: 3}
       propertyPath: m_RootOrder
       value: 7
