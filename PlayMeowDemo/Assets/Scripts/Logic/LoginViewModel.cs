@@ -18,7 +18,7 @@ namespace PlayMeowDemo
 
         private int _errorNotifyRoutine                 = -1; // 控制錯誤訊息顯示的 Coroutine
 
-        [NotifyHandler(typeof(ShowLoginMsg))]
+        [NotifyHandler]
         private void ShowLogin(ShowLoginMsg dummyMsg)
         {
             _uiVisible.Value    = true;
@@ -27,7 +27,7 @@ namespace PlayMeowDemo
             _errorMsg.Value     = "";
         }
 
-        [NotifyHandler(typeof(LoginErrorMsg))]
+        [NotifyHandler]
         private void ShowError(LoginErrorMsg errorMsg)
         {
             ShowError(errorMsg.error);
