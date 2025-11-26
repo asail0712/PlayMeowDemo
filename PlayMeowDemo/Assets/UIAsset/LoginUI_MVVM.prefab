@@ -856,7 +856,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 758dab670f413224e9ac51bdf05b396f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoCreateVM: 1
   _loginBtn: {fileID: 1600004949}
   _googleLoginBtn: {fileID: 4437330756477593409}
   _regNewBtn: {fileID: 7842312637357000655}
@@ -867,6 +866,16 @@ MonoBehaviour:
   _privacyBtn: {fileID: 4012857642904064896}
   _tcBtn: {fileID: 1655240142122912515}
   _closeBtn: {fileID: 1118265630}
+  _titleLogo: {fileID: 4494056753345056828}
+  _plzInputEmailTxt: {fileID: 6997159823775595464}
+  _plzInputPWTxt: {fileID: 7607930964430808181}
+  _loginTxt: {fileID: 7870109698066538288}
+  _forgetPWTxt: {fileID: 269304271}
+  _regNewTxt: {fileID: 2880283559294647084}
+  _plzInputIdentityTxt: {fileID: 1370456283727199878}
+  _loginWithOtherTxt: {fileID: 8038587642107351970}
+  _privacyTxt: {fileID: 7457452872714450118}
+  _tcTxt: {fileID: 4070052181395351565}
 --- !u!114 &-3100735272060718012
 MonoBehaviour:
   m_ObjectHideFlags: 0

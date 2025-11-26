@@ -7,11 +7,34 @@ using XPlan.UI;
 namespace PlayMeowDemo 
 {
     // 登入介面 UI：處理按鈕事件、輸入框、錯誤提示顯示等。
+    [ViewBinding]
     public class LoginView : ViewBase<LoginViewModel>
-    {
+    {        
+        [Header("I18N處理")]
+        [I18NView("TitleLogo")]
+        [SerializeField] private Image _titleLogo;
+        [I18NView("PlzInputEmail")]
+        [SerializeField] private Text _plzInputEmailTxt;
+        [I18NView("PlzInputPW")]
+        [SerializeField] private Text _plzInputPWTxt;
+        [I18NView("Login")]
+        [SerializeField] private Text _loginTxt;
+        [I18NView("ForgetPW")]
+        [SerializeField] private Text _forgetPWTxt;
+        [I18NView("RegNew")]
+        [SerializeField] private Text _regNewTxt;
+        [I18NView("PlzInputIdentity")]
+        [SerializeField] private Text _plzInputIdentityTxt;
+        [I18NView("LoginWithOther")]
+        [SerializeField] private Text _loginWithOtherTxt;
+        [I18NView("Privacy")]
+        [SerializeField] private Text _privacyTxt;
+        [I18NView("T&C")]
+        [SerializeField] private Text _tcTxt;
+
         [Header("登入按鈕組")]
         [SerializeField] private Button _loginBtn;
-        [SerializeField] private Button _googleLoginBtn;     
+        [SerializeField] private Button _googleLoginBtn;
         [SerializeField] private Button _regNewBtn;
         [SerializeField] private Button _forgetPWBtn;
 
@@ -28,19 +51,5 @@ namespace PlayMeowDemo
 
         [Header("其他")]
         [SerializeField] private Button _closeBtn;
-
-        // UI 每次啟用時的初始狀態
-        private void OnEnable()
-        {
-            Initialized();
-        }
-
-        // 初始化輸入框與錯誤訊息
-        private void Initialized()
-        {
-            _errorMsgTxt.text   = "";
-            _accountTxt.text    = "";
-            _pwTxt.text         = "";
-        }
     }
 }

@@ -856,14 +856,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ae8f276f506c9488db290c932c1103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _titleLogo: {fileID: 4494056753345056828}
+  _plzInputEmail: {fileID: 6997159823775595464}
+  _plzInputPW: {fileID: 7607930964430808181}
+  _login: {fileID: 7870109698066538288}
+  _forgetPW: {fileID: 269304271}
+  _regNew: {fileID: 2880283559294647084}
+  _plzInputIdentity: {fileID: 1370456283727199878}
+  _loginWithOther: {fileID: 8038587642107351970}
+  _privacy: {fileID: 7457452872714450118}
+  _tc: {fileID: 4070052181395351565}
   _loginBtn: {fileID: 1600004949}
   _googleBtn: {fileID: 4437330756477593409}
   _regNewBtn: {fileID: 7842312637357000655}
   _forgetPWBtn: {fileID: 2009511311}
   _accountTxt: {fileID: 292658690504811676}
   _pwTxt: {fileID: 5746100191755531837}
-  _accountRoll: {fileID: 226744994779664855}
-  _pwRoll: {fileID: 5255990936035319315}
   _errorTxt: {fileID: 7283655340453658334}
   _privacyBtn: {fileID: 4012857642904064896}
   _tcBtn: {fileID: 1655240142122912515}

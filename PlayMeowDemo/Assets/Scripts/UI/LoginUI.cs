@@ -10,6 +10,28 @@ namespace PlayMeowDemo
     // 透過 UIRequest 發送事件給 Presenter，並接收 UICommand 做顯示控制。
     public class LoginUI : UIBase
     {
+        [Header("I18N處理")]
+        [I18NView("TitleLogo")]
+        [SerializeField] private Image _titleLogo;
+        [I18NView("PlzInputEmail")]
+        [SerializeField] private Text _plzInputEmail;
+        [I18NView("PlzInputPW")]
+        [SerializeField] private Text _plzInputPW;
+        [I18NView("Login")]
+        [SerializeField] private Text _login;
+        [I18NView("ForgetPW")]
+        [SerializeField] private Text _forgetPW;
+        [I18NView("RegNew")]
+        [SerializeField] private Text _regNew;
+        [I18NView("PlzInputIdentity")]
+        [SerializeField] private Text _plzInputIdentity;
+        [I18NView("LoginWithOther")]
+        [SerializeField] private Text _loginWithOther;
+        [I18NView("Privacy")]
+        [SerializeField] private Text _privacy;
+        [I18NView("T&C")]
+        [SerializeField] private Text _tc;
+
         [Header("登入按鈕組")]
         [SerializeField] private Button _loginBtn;
         [SerializeField] private Button _googleBtn;     
@@ -141,7 +163,7 @@ namespace PlayMeowDemo
         /********************************
          * I18N相關處理
          * *****************************/
-        protected override void OnRefreshLanguage()
+        protected override void OnRefreshLanguage(int currLang)
         {
             // 更換語系時同時觸發初始化
             Initialized();

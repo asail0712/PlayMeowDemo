@@ -7,8 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-using XPlan.Interface;
-using XPlan.Scenes;
+using XPlan.Recycle;
 using XPlan.UI.Fade;
 using XPlan.Utility;
 
@@ -26,7 +25,7 @@ namespace XPlan.UI
 	}
 
 	public class UIBase : MonoBehaviour, IUIListener, IUIView
-    {
+	{
         /********************************
 		* Listen Handler Call
 		* *****************************/
@@ -39,7 +38,7 @@ namespace XPlan.UI
 		* *****************************/
         public void ListenCall(string id, ListenOption option, Action<UIParam[]> paramAction)
 		{
-			UIEventBus.ListenCall(id, this, option, (paramList) =>
+            UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				paramAction?.Invoke(paramList);
 			});
@@ -47,7 +46,7 @@ namespace XPlan.UI
 
 		public void ListenCall<T>(string id, ListenOption option, Action<T> paramAction)
 		{
-			UIEventBus.ListenCall(id, this, option, (paramList) =>
+            UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				paramAction?.Invoke(paramList[0].GetValue<T>());
 			});
@@ -55,7 +54,7 @@ namespace XPlan.UI
 
 		public void ListenCall(string id, ListenOption option, Action noParamAction)
 		{
-			UIEventBus.ListenCall(id, this, option, (paramList) =>
+            UIEventBus.ListenCall(id, this, option, (paramList) =>
 			{
 				noParamAction?.Invoke();
 			});
@@ -176,7 +175,7 @@ namespace XPlan.UI
 		{
 			toggle.onValueChanged.AddListener((bOn) =>
 			{
-				UIEventBus.TriggerCallback<bool>(uniqueID, bOn, onPress);
+                UIEventBus.TriggerCallback<bool>(uniqueID, bOn, onPress);
 			});
 		}
 
@@ -207,7 +206,7 @@ namespace XPlan.UI
 
 					int idx = Array.IndexOf(toggleArr, toggle);
 
-					UIEventBus.TriggerCallback<int>(uniqueID, idx, onPress);
+                    UIEventBus.TriggerCallback<int>(uniqueID, idx, onPress);
 				});
 			}
 		}
@@ -270,14 +269,14 @@ namespace XPlan.UI
 			{
 				onPress?.Invoke(val, pointTrigger);
 
-				UIEventBus.TriggerCallback<bool>(uniqueID, true, null);
+                UIEventBus.TriggerCallback<bool>(uniqueID, true, null);
 			};
 
 			pointTrigger.OnPointUp += (val) =>
 			{
 				onPull?.Invoke(val, pointTrigger);
 
-				UIEventBus.TriggerCallback<bool>(uniqueID, false, null);
+                UIEventBus.TriggerCallback<bool>(uniqueID, false, null);
 			};
 		}
 
@@ -302,12 +301,12 @@ namespace XPlan.UI
 
 		protected void DirectTrigger<T>(string uniqueID, T param, Action<T> onPress = null)
 		{
-			UIEventBus.TriggerCallback<T>(uniqueID, param, onPress);
+            UIEventBus.TriggerCallback<T>(uniqueID, param, onPress);
 		}
 
 		protected void DirectTrigger(string uniqueID, Action onPress = null)
 		{
-			UIEventBus.TriggerCallback(uniqueID, onPress);
+            UIEventBus.TriggerCallback(uniqueID, onPress);
 		}
 
 		/********************************
@@ -315,7 +314,7 @@ namespace XPlan.UI
 		* *****************************/
 		protected void AddUIListener<T>(string uniqueID, Action<T> callback)
 		{
-			UIEventBus.RegisterCallback(uniqueID, this, (param) =>
+            UIEventBus.RegisterCallback(uniqueID, this, (param) =>
 			{
 				callback?.Invoke(param.GetValue<T>());
 			});
@@ -323,7 +322,7 @@ namespace XPlan.UI
 
 		protected void AddUIListener(string uniqueID, Action callback)
 		{
-			UIEventBus.RegisterCallback(uniqueID, this, (dump) =>
+            UIEventBus.RegisterCallback(uniqueID, this, (dump) =>
 			{
 				callback?.Invoke();
 			});
@@ -343,8 +342,8 @@ namespace XPlan.UI
 		{
 			OnDispose();
 
-			UIEventBus.UnlistenAllCall(this);
-			UIEventBus.UnregisterAllCallback(this);
+            UIEventBus.UnlistenAllCall(this);
+            UIEventBus.UnregisterAllCallback(this);
 		}
 
 		protected virtual void OnDispose()
@@ -352,22 +351,17 @@ namespace XPlan.UI
 			// for override
 		}
 
-		/********************************
-		 * 初始化
-		 * *****************************/
-		public int SortIdx { get; set; }
-
-		/********************************
+        /********************************
 		 * 其他
 		 * *****************************/
-		protected string GetStr(string keyStr)
+        protected string GetStr(string keyStr)
 		{
-			return UIController.Instance.GetStr(keyStr);
+			return StringTable.Instance.GetStr(keyStr);
 		}
 
         protected string ReplaceStr(string keyStr, params string[] paramList)
         {
-            return UIController.Instance.ReplaceStr(keyStr, paramList);
+            return StringTable.Instance.ReplaceStr(keyStr, paramList);
         }
 
         protected void DefaultToggleBtns(Button[] btns)
@@ -381,77 +375,8 @@ namespace XPlan.UI
 		/********************************
 		 * 工具
 		 * *****************************/
-		public void LoadImageFromUrl(RawImage targetImage, string url)
-		{
-			if (string.IsNullOrEmpty(url))
-			{
-				LogSystem.Record("避免使用空字串下載圖片", LogType.Warning);
-
-				return;
-			}
-
-			MonoBehaviourHelper.StartCoroutine(LoadImageFromUrl_Internal(url, (texture) => 
-			{
-				targetImage.texture = texture;
-			}));
-		}
-
-		public void LoadImageFromUrl(Image targetImage, string url, bool bResize = true)
-		{
-			if (string.IsNullOrEmpty(url))
-			{
-				LogSystem.Record("避免使用空字串下載圖片", LogType.Warning);
-
-				return;
-			}
-
-			MonoBehaviourHelper.StartCoroutine(LoadImageFromUrl_Internal(url, (texture) => 
-			{
-				Sprite sprite = Sprite.Create(
-									texture,
-									new Rect(0, 0, texture.width, texture.height),
-									new Vector2(0.5f, 0.5f));
-
-				targetImage.sprite = sprite;
-
-				if (bResize)
-				{
-					// 自動調整 Image 尺寸符合原始圖片
-					RectTransform rt = targetImage.GetComponent<RectTransform>();
-					if (rt != null)
-					{
-						rt.sizeDelta = new Vector2(texture.width, texture.height);
-					}
-				}
-			}));
-		}
-
-		private IEnumerator LoadImageFromUrl_Internal(string url, Action<Texture2D> finishAction)
-		{
-			UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
-			Texture2D texture		= null;
-
-			yield return request.SendWebRequest();
-
-#if UNITY_2020_1_OR_NEWER
-			if (request.result != UnityWebRequest.Result.Success)
-#else
-            if (request.isNetworkError || request.isHttpError)
-#endif
-			{
-				LogSystem.Record("載入圖片失敗: " + request.error, LogType.Error);
-
-				texture = null;
-			}
-			else
-			{
-				texture	= DownloadHandlerTexture.GetContent(request);
-			}
-
-			finishAction?.Invoke(texture);
-		}
-
-		public void FadeInOutAlpha(CanvasGroup canvasGroup, float targetAlpha, float duration, Action finishAction = null)
+		
+        public void FadeInOutAlpha(CanvasGroup canvasGroup, float targetAlpha, float duration, Action finishAction = null)
 		{
 			MonoBehaviourHelper.StartCoroutine(FadeInOutAlpha_Internal(canvasGroup, targetAlpha, duration, finishAction));
 		}
@@ -474,72 +399,27 @@ namespace XPlan.UI
 			finishAction?.Invoke();
 		}
 
-		/***************************************
-		 * UI文字調整
+        /***************************************
+		 * 實作IUIView
 		 * *************************************/
-		public void RefreshLanguage()
-		{
-            OnRefreshLanguage();
-		}
+        public int SortIdx { get; set; }
 
-		protected virtual void OnRefreshLanguage()
-		{
+        public void RefreshLanguage(int currLang)
+        {
+            OnRefreshLanguage(currLang);
+        }
 
-		}
+        protected virtual void OnRefreshLanguage(int currLang)
+        {
 
-		/***************************************
+        }
+
+        /***************************************
 		 * UI Visible
 		 * *************************************/
-		public void ToggleUI(GameObject ui, bool bEnabled)
+        public void ToggleUI(GameObject ui, bool bEnabled)
 		{
-			// 狀態一致 不需要改變
-			if(ui.activeSelf == bEnabled)
-            {
-				return;
-            }
-
-			FadeBase[] fadeList = ui.GetComponents<FadeBase>();
-
-			if (fadeList == null || fadeList.Length == 0)
-			{
-				ui.SetActive(bEnabled);
-				return;
-			}
-
-			if (bEnabled)
-			{
-				ui.SetActive(true);
-
-				Array.ForEach<FadeBase>(fadeList, (fadeComp) =>
-				{
-					if (fadeComp == null)
-					{
-						return;
-					}
-
-					fadeComp.PleaseStartYourPerformance(true, null);
-				});
-			}
-			else
-			{
-				int finishCounter = 0;
-
-				Array.ForEach<FadeBase>(fadeList, (fadeComp) =>
-				{
-					if (fadeComp == null)
-					{
-						return;
-					}
-
-					fadeComp.PleaseStartYourPerformance(false, () =>
-					{
-						if (++finishCounter == fadeList.Length)
-						{
-							ui.SetActive(false);
-						}
-					});
-				});
-			}
+			ViewVisibilityHelper.ToggleUI(ui, bEnabled);			
 		}
 	}
 }

@@ -18,24 +18,24 @@ namespace PlayMeowDemo
 
         private int _errorNotifyRoutine                 = -1; // 控制錯誤訊息顯示的 Coroutine
 
-        // Start is called before the first frame update
-        public LoginViewModel()
-            : base()
+        [NotifyHandler(typeof(ShowLoginMsg))]
+        private void ShowLogin(ShowLoginMsg dummyMsg)
         {
-            RegisterNotify<LoginErrorMsg>((msg) =>
-            {
-                ShowError(msg.error);                
-            });
+            _uiVisible.Value    = true;
+            _account.Value      = "";
+            _pw.Value           = "";
+            _errorMsg.Value     = "";
+        }
 
-            RegisterNotify<ShowLoginMsg>((dummy) =>
-            {
-                _uiVisible.Value = true;
-            });
+        [NotifyHandler(typeof(LoginErrorMsg))]
+        private void ShowError(LoginErrorMsg errorMsg)
+        {
+            ShowError(errorMsg.error);
         }
 
         private void ShowError(LoginError error)
         {
-            if(_errorNotifyRoutine != -1)
+            if (_errorNotifyRoutine != -1)
             {
                 StopCoroutine(_errorNotifyRoutine);
             }
@@ -96,6 +96,7 @@ namespace PlayMeowDemo
         /****************************************
          * 監控ui component 狀態改變觸發的函數
          * **************************************/
+        [ButtonBinding]
         private void OnLoginClick()
         {
             string account  = _account.Value;
@@ -134,31 +135,37 @@ namespace PlayMeowDemo
             LogSystem.Record($"使用者要求登入, 帳號為 {account}, 密碼為 {pw}");
         }
 
+        [ButtonBinding]
         private void OnGoogleLoginClick()
         {
             LogSystem.Record($"使用者要求使用Google登入");
         }
 
+        [ButtonBinding]
         private void OnForgetPWClick()
         {
             LogSystem.Record($"使用者忘記自己的密碼");
         }
 
+        [ButtonBinding]
         private void OnRegNewClick()
         {
             LogSystem.Record($"使用者要求註冊新帳號");
         }
 
+        [ButtonBinding]
         private void OnPrivacyClick()
         {
             LogSystem.Record($"使用者要求查看隱私權");
         }
 
+        [ButtonBinding]
         private void OnTcClick()
         {
             LogSystem.Record($"使用者查看服務條款");
         }
 
+        [ButtonBinding]
         private void OnCloseClick()
         {
             LogSystem.Record($"使用者關掉Login UI");
@@ -166,11 +173,13 @@ namespace PlayMeowDemo
             _uiVisible.Value = false;
         }
 
+        [ButtonBinding]
         private void OnAccountChange(string account)
         {
             Debug.Log($"帳號輸入中 {account}");
         }
 
+        [ButtonBinding]
         private void OnPwChange(string pw)
         {
             Debug.Log($"密碼輸入中 {pw}");
