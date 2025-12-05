@@ -7,9 +7,9 @@ namespace XPlan
     ///   OnHpChange(int) → int hp
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class BindingObAttribute : Attribute
+    public sealed class ObBindingAttribute : Attribute
     {
-        public BindingObAttribute()
+        public ObBindingAttribute()
         {
         }
     }
