@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/PlayMeowLoginDemo.unity
+  - enabled: 0
+    path: Assets/Scenes/PlayMeowLoginDemo_MVP.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/PlayMeow_MVVM.unity
+    guid: 98832114ee877104e994531a87c44cc5
   m_configObjects: {}
