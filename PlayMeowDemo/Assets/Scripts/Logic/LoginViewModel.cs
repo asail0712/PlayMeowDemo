@@ -11,20 +11,20 @@ namespace PlayMeowDemo
     // 透過 UIRequest 發送事件給 Presenter，並接收 UICommand 做顯示控制。
     public class LoginViewModel : ViewModelBase
     {
-        private ObservableProperty<string> _account     = new ObservableProperty<string>();
-        private ObservableProperty<string> _pw          = new ObservableProperty<string>();
-        private ObservableProperty<bool> _uiVisible     = new(true);
-        private ObservableProperty<string> _errorMsg    = new ObservableProperty<string>();
+        private ObservableProperty<string> _account         = new ObservableProperty<string>();
+        private ObservableProperty<string> _pw              = new ObservableProperty<string>();
+        private ObservableProperty<bool> _loginViewVisible  = new(true);
+        private ObservableProperty<string> _errorMsg        = new ObservableProperty<string>();
 
-        private int _errorNotifyRoutine                 = -1; // 控制錯誤訊息顯示的 Coroutine
+        private int _errorNotifyRoutine                     = -1; // 控制錯誤訊息顯示的 Coroutine
 
         [NotifyHandler]
         private void ShowLogin(ShowLoginMsg dummyMsg)
         {
-            _uiVisible.Value    = true;
-            _account.Value      = "";
-            _pw.Value           = "";
-            _errorMsg.Value     = "";
+            _loginViewVisible.Value = true;
+            _account.Value          = "";
+            _pw.Value               = "";
+            _errorMsg.Value         = "";
         }
 
         [NotifyHandler]
@@ -170,7 +170,7 @@ namespace PlayMeowDemo
         {
             LogSystem.Record($"使用者關掉Login UI");
 
-            _uiVisible.Value = false;
+            _loginViewVisible.Value = false;
         }
 
         [ButtonBinding]
