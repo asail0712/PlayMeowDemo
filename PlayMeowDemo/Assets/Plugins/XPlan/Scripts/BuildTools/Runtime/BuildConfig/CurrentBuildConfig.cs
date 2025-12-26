@@ -7,10 +7,4 @@ namespace XPlan.BuildTools.Runtime
         public BuildConfigSO so;
         public BuildConfigApplierSO applierSO;
     }
-
-    public class CurrentPlayConfig : ScriptableObject
-    {
-        public PlayConfigSO so;
-        public PlayConfigApplierSO applierSO;
-    }
 }
