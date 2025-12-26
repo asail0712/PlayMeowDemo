@@ -15,7 +15,7 @@ namespace XPlan.Editors.Weaver
     /// 在 OnEnable 末尾插入 VmButtonBindingRuntime.BindButtons(this);
     /// 在 OnDisable 末尾插入 VmButtonBindingRuntime.UnbindButtons(this);
     /// </summary>
-    internal sealed class ToggleBindingWeaver //: ITypeAspectWeaver
+    internal sealed class InputTfBindingWeaver //: ITypeAspectWeaver
     {
         public string AttributeFullName => "XPlan.ViewBindingAttribute";
 
@@ -29,16 +29,16 @@ namespace XPlan.Editors.Weaver
                 return;
 
             // 取得 Runtime 的靜態方法參考
-            var bindMethodInfo = typeof(VmToggleBindingRuntime).GetMethod(
-                nameof(VmToggleBindingRuntime.Bind),
+            var bindMethodInfo = typeof(VmInputTfBindingRuntime).GetMethod(
+                nameof(VmInputTfBindingRuntime.Bind),
                 new[] { typeof(object) });
 
-            var unbindMethodInfo = typeof(VmToggleBindingRuntime).GetMethod(
-                nameof(VmToggleBindingRuntime.Unbind),
+            var unbindMethodInfo = typeof(VmInputTfBindingRuntime).GetMethod(
+                nameof(VmInputTfBindingRuntime.Unbind),
                 new[] { typeof(object) });
 
             if (bindMethodInfo == null || unbindMethodInfo == null)
-                throw new InvalidOperationException("[VmToggleBindingRuntime] 找不到 VmToggleBindingRuntime.BindToggles / UnbindToggles");
+                throw new InvalidOperationException("[VmInputTfBindingRuntime] 找不到 VmInputTfBindingRuntime.BindInputTf / UnbindInputTf");
 
             var bindMethodRef   = module.ImportReference(bindMethodInfo);
             var unbindMethodRef = module.ImportReference(unbindMethodInfo);
@@ -47,7 +47,7 @@ namespace XPlan.Editors.Weaver
             InjectCallInto(targetType, "OnEnable", bindMethodRef);
             InjectCallInto(targetType, "OnDisable", unbindMethodRef);
 
-            Debug.Log($"[VmToggleBindingRuntime] 成功注入 {targetType.FullName} 的 OnEnable/OnDisable");
+            Debug.Log($"[VmInputTfBindingRuntime] 成功注入 {targetType.FullName} 的 OnEnable/OnDisable");
         }
 
         /// <summary>

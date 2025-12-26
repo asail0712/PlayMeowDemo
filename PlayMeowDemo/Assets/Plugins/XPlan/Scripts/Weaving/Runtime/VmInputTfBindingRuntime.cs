@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace XPlan.Weaver.Runtime
 {
-    public static class VmButtonBindingRuntime
+    public static class VmInputTfBindingRuntime
     {
         /// <summary>
         /// 1. 傳入 ViewBase 的衍生類別實例即可（型別用 object 即可）
@@ -17,50 +17,52 @@ namespace XPlan.Weaver.Runtime
 
             var viewType = viewInstance.GetType();
 
-            // 2. 掃描 View 裡的 Button 欄位，記錄名稱 → Button 實例
-            var buttonMap = FindButtonsOnView(viewType, viewInstance);
-            if (buttonMap.Count == 0)
+            // 2. 掃描 View 裡的 InputField 欄位，記錄名稱 → InputField 實例
+            var tfMap = FindInputTfOnView(viewType, viewInstance);
+            if (tfMap.Count == 0)
                 return;
 
             foreach (var method in methods)
             {
                 // 沒有 attribute 就跳過
-                if (!method.IsDefined(typeof(ButtonBindingAttribute), inherit: true))
+                if (!method.IsDefined(typeof(InputTfBindingAttribute), inherit: true))
                     continue;
 
-                // 必須：無參數、無回傳 (void)
+                // 必須：無回傳 (void)
                 if (method.ReturnType != typeof(void))
                     continue;
 
-                if (method.GetParameters().Length != 0)
+                // 參數要有一個 並且為string型別
+                var parameters = method.GetParameters();
+                if (parameters.Length != 1 || parameters[0].ParameterType != typeof(string))
                     continue;
 
-                // 名稱必須符合 On[ButtonName]Click
-                var buttonNameCore = ExtractButtonNameFromMethod(method.Name);
-                if (buttonNameCore == null)
+                // 名稱必須符合 On[ToggleName]Trigger
+                var tfNameCore = ExtractTfNameFromMethod(method.Name);
+                if (tfNameCore == null)
                     continue;
 
-                // 4. 根據 buttonNameCore 去對應 View 上的 Button 欄位名稱
-                if (!TryFindButtonByName(buttonMap, buttonNameCore, out var button))
+                // 4. 根據 tfNameCore 去對應 View 上的 tf 欄位名稱
+                if (!TryFindTfByName(tfMap, tfNameCore, out var tf))
                     continue;
 
-                // 實際綁定 onClick
+                // 實際綁定 onValueChanged
                 // 注意：這裡用閉包包住 method & viewModel
                 var targetMethod = method;
 
-                button.onClick.AddListener(() =>
+                tf.onValueChanged.AddListener((s) =>
                 {
                     try
                     {
                         // ★ 點擊時才找一次 _viewModel，避免提前存取
                         var targetVm = GetViewModelInstance(viewType, viewInstance);
 
-                        targetMethod.Invoke(targetVm, null);
+                        targetMethod.Invoke(targetVm, new object[] { s });
                     }
                     catch (Exception ex)
                     {
                         UnityEngine.Debug.LogError(
-                            $"[VmButtonBindingRuntime] 執行 {targetMethod.DeclaringType.Name}.{targetMethod.Name} 時發生例外：{ex}");
+                            $"[VmInputTfBindingRuntime] 執行 {targetMethod.DeclaringType.Name}.{targetMethod.Name} 時發生例外：{ex}");
                     }
                 });
             }
@@ -72,27 +74,27 @@ namespace XPlan.Weaver.Runtime
                 return;
 
             var viewType    = viewInstance.GetType();
-            var buttonMap   = FindButtonsOnView(viewType, viewInstance);
-            if (buttonMap.Count == 0)
+            var tfMap       = FindInputTfOnView(viewType, viewInstance);
+            if (tfMap.Count == 0)
                 return;
 
             // 移除全部 Listener（Unity 最標準 safest 的作法）
-            foreach (var kv in buttonMap)
+            foreach (var kv in tfMap)
             {
-                var btn = kv.Value;
-                if (btn != null)
+                var tf = kv.Value;
+                if (tf != null)
                 {
-                    btn.onClick.RemoveAllListeners();
+                    tf.onValueChanged.RemoveAllListeners();
                 }
             }
         }
 
         /// <summary>
-        /// 往上爬型別階層，找所有 Button 欄位
+        /// 往上爬型別階層，找所有 InputField 欄位
         /// </summary>
-        private static Dictionary<string, Button> FindButtonsOnView(Type viewType, object viewInstance)
+        private static Dictionary<string, InputField> FindInputTfOnView(Type viewType, object viewInstance)
         {
-            var dict    = new Dictionary<string, Button>();
+            var dict    = new Dictionary<string, InputField>();
             var cur     = viewType;
 
             while (cur != null && cur != typeof(object))
@@ -102,14 +104,14 @@ namespace XPlan.Weaver.Runtime
 
                 foreach (var f in fields)
                 {
-                    if (typeof(Button).IsAssignableFrom(f.FieldType))
+                    if (typeof(InputField).IsAssignableFrom(f.FieldType))
                     {
-                        var btn             = f.GetValue(viewInstance) as Button;
+                        var tf             = f.GetValue(viewInstance) as InputField;
                         var normalizeName   = NormalizeName(f.Name);
 
-                        if (btn != null && !dict.ContainsKey(normalizeName))
+                        if (tf != null && !dict.ContainsKey(normalizeName))
                         {
-                            dict.Add(normalizeName, btn);
+                            dict.Add(normalizeName, tf);
                         }
                     }
                 }
@@ -145,18 +147,22 @@ namespace XPlan.Weaver.Runtime
         }
 
         /// <summary>
-        /// 解析方法名稱是否符合 On[ButtonName]Click，
-        /// 有的話回傳 [ButtonName]（中間那段），否則回傳 null。
+        /// 解析方法名稱是否符合 On[TfName]Modify，
+        /// 有的話回傳 [TfName]（中間那段），否則回傳 null。
         /// </summary>
-        private static string ExtractButtonNameFromMethod(string methodName)
+        private static string ExtractTfNameFromMethod(string methodName)
         {
             const string prefix = "On";
-            const string suffix = "Click";
+            const string suffix = "Modify";
 
             if (!methodName.StartsWith(prefix, StringComparison.Ordinal))
                 return null;
 
             if (!methodName.EndsWith(suffix, StringComparison.Ordinal))
+                return null;
+
+            int coreLength = methodName.Length - prefix.Length - suffix.Length;
+            if (coreLength <= 0)
                 return null;
 
             var core = methodName.Substring(
@@ -169,31 +175,23 @@ namespace XPlan.Weaver.Runtime
             return core;
         }
 
-        /// <summary>
-        /// 根據「中間那段 ButtonNameCore」去找 View 上的 Button 欄位。
-        /// 支援幾種常見命名：
-        ///  - demoTriggerBtn    <-> OnDemoTriggerClick
-        ///  - DemoTrigger       <-> OnDemoTriggerClick
-        ///  - demoTrigger       <-> OnDemoTriggerClick
-        /// </summary>
-        private static bool TryFindButtonByName(
-            Dictionary<string, Button> map,
-            string buttonNameCore,
-            out Button button)
+        private static bool TryFindTfByName(
+            Dictionary<string, InputField> map,
+            string tfNameCore,
+            out InputField tf)
         {
-            // 精準大小寫一致：DemoTrigger
-            if (map.TryGetValue(buttonNameCore, out button))
+            // 精準大小寫一致：DemoChange
+            if (map.TryGetValue(tfNameCore, out tf))
                 return true;
+            
+            var camel = char.ToLowerInvariant(tfNameCore[0]) +
+                        tfNameCore.Substring(1);
 
-            // 首字小寫：demoTrigger / demoTriggerBtn
-            var camel = char.ToLowerInvariant(buttonNameCore[0]) +
-                        buttonNameCore.Substring(1);
-
-            if (map.TryGetValue(camel, out button))
+            if (map.TryGetValue(camel, out tf))
                 return true;
 
             // 都沒有命中就失敗
-            button = null;
+            tf = null;
             return false;
         }
 
@@ -232,10 +230,10 @@ namespace XPlan.Weaver.Runtime
 
         private static readonly string[] Suffixes =
         {
-            "Btn",
-            "btn",
-            "Button",
-            "button"
+            "Txt",
+            "txt",
+            "Text",
+            "text"
         };
 
         private static string NormalizeName(string raw)
