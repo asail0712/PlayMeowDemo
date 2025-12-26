@@ -26,9 +26,9 @@ namespace XPlan.Net
          * Send
          * ************************************/
 
-        public async Task<bool> SendAsync()
+        public async Task<TResponse> SendAsync<TResponse>()
         {
-            return await SendAsync_Imp<bool>();
+            return await SendAsync_Imp<TResponse>();
         }
     }
 }
