@@ -33,4 +33,15 @@ namespace Demo
             this.error = error;
         }
     }
+
+    public class AddItemDescMsg : MessageBase
+    {
+        private static int i = 1;
+
+        public string desc;
+        public AddItemDescMsg() 
+        {
+            this.desc = $"這是第 {i++} 個Item";
+        }
+    }
 }
