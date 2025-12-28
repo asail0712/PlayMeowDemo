@@ -1,6 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
+using XPlan.UI;
 
-public class TableView
+namespace Demo.Table
 {
-    
+    public class TableView : TableViewBase<TableViewModel, TableItemView, TableItemViewModel>
+    {
+
+    }
 }
