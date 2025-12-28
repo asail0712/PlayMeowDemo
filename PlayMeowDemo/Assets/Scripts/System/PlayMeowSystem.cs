@@ -3,7 +3,7 @@
 using XPlan;
 using XPlan.UI;
 
-namespace PlayMeowDemo
+namespace Demo
 {
     // 系統層的進入點，負責初始注入邏輯與提供測試按鍵（ContextMenu）操作
     public class PlayMeowSystem : SystemBase

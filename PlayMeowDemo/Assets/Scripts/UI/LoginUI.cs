@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using XPlan;
 using XPlan.UI;
 
-namespace PlayMeowDemo 
+namespace Demo.MVP
 {
     // 登入介面 UI：處理按鈕事件、輸入框、錯誤提示顯示等。
     // 透過 UIRequest 發送事件給 Presenter，並接收 UICommand 做顯示控制。

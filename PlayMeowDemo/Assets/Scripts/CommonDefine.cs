@@ -1,4 +1,4 @@
-﻿namespace PlayMeowDemo
+﻿namespace Demo
 {
     // 共用常數定義（系統中可直接引用，不需實例化）
     public static class CommonDefine

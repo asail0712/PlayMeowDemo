@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using XPlan;
 using XPlan.UI;
 
-namespace PlayMeowDemo 
+namespace Demo.MVVM 
 {
     // 登入介面 UI：處理按鈕事件、輸入框、錯誤提示顯示等。
     [ViewBinding]
