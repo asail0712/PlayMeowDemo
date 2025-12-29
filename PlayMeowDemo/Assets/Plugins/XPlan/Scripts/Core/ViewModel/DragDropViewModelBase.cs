@@ -4,10 +4,10 @@ namespace XPlan
 {
     public class DragDropRequest
     {
-        public readonly object Source;
-        public readonly object Target;
+        public readonly DragDropViewModelBase Source;
+        public readonly DragDropViewModelBase Target;
 
-        public DragDropRequest(object source, object target)
+        public DragDropRequest(DragDropViewModelBase source, DragDropViewModelBase target)
         {
             Source = source;
             Target = target;
@@ -33,7 +33,7 @@ namespace XPlan
     }
 
 
-    public class DragDropViewModelBase : ViewModelBase
+    public class DragDropViewModelBase : ItemViewModelBase
     {
         // payload（這次 drop 的內容）
         private ObservableProperty<DragDropRequest> DropRequest { get; }
@@ -58,13 +58,24 @@ namespace XPlan
             });
         }
 
-        internal void RequestDrop(object source, object target)
+        internal void RequestDrop(DragDropViewModelBase source)
         {
-            DropRequest.Value = new DragDropRequest(source, target);
+            DropRequest.Value = new DragDropRequest(source, this);
             DropSeq.Value++;
         }
 
-        protected virtual void HandleDrop(DragDropRequest request)
+        private void HandleDrop(DragDropRequest request)
+        {
+            if (request.Source.GetType() != request.Target.GetType())
+            {
+                DropResult.Value = DragDropResult.Fail("Not Same Type !!");
+                return;
+            }
+
+            OnHandleDrop(request);
+        }
+
+        protected virtual void OnHandleDrop(DragDropRequest request)
         {
             // 依照業務邏輯修改 DropResult
         }
