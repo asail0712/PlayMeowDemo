@@ -9,7 +9,6 @@ namespace XPlan
          where TDDItemViewModel : DDItemViewModelBase, new()
     {
         private DragContext<TDDItemViewModel> _ctx  = null;
-        private TDDItemViewModel _currHoverItemVM   = null;
         private IGhostIconController _ghost         = null;
 
         public void InitTable(int num)
@@ -34,8 +33,6 @@ namespace XPlan
         {
             if (_ctx != null)
                 CancelDrag("Begin while previous ctx still alive");
-
-            ClearHover();
 
             // drag
             _ctx = new DragContext<TDDItemViewModel>
@@ -102,30 +99,27 @@ namespace XPlan
             EndDragAndCleanup(OnDragDrop(_ctx));
         }
 
-        [DragBinding(DragPhase.ItemEnter)]
-        public void OnItemEnter(TDDItemViewModel itemVM, PointerEventData e)
+        [DragBinding(DragPhase.DragEnter)]
+        public void OnDragEnter(TDDItemViewModel itemVM, PointerEventData e)
         {
-            // 只處理「hover 真的變更」的情況
-            if (_currHoverItemVM != null && EqualityComparer<TDDItemViewModel>.Default.Equals(_currHoverItemVM, itemVM))
-                return;
+            if (_ctx == null) return;
+            if (e.pointerId != _ctx.PointerId) { CancelDrag("Pointer mismatch on Drop"); return; }
 
-            var oldHover        = _currHoverItemVM;
-            _currHoverItemVM    = itemVM;
+            _ctx.DragHoverItem  = itemVM;
 
-            OnHoverChanged(oldHover, _currHoverItemVM, e, _ctx != null);
+
+            OnDragEnter(_ctx);
         }
 
-        [DragBinding(DragPhase.ItemExit)]
-        public void OnItemExit(TDDItemViewModel itemVM, PointerEventData e)
+        [DragBinding(DragPhase.DragExit)]
+        public void OnDragExit(TDDItemViewModel itemVM, PointerEventData e)
         {
-            // 只處理「退出的就是當前 hover」的情況
-            if (_currHoverItemVM != null && !EqualityComparer<TDDItemViewModel>.Default.Equals(_currHoverItemVM, itemVM))
-                return;
+            if (_ctx == null) return;
+            if (e.pointerId != _ctx.PointerId) { CancelDrag("Pointer mismatch on Drop"); return; }
 
-            var oldHover        = _currHoverItemVM;
-            _currHoverItemVM    = null;
+            _ctx.DragHoverItem = null;
 
-            OnHoverChanged(oldHover, _currHoverItemVM, e, _ctx != null);
+            OnDragExit(_ctx);
         }
 
         private void CancelDrag(string reason)
@@ -151,22 +145,7 @@ namespace XPlan
             if (hideGhost)
                 _ghost?.Hide();
 
-            ClearHover();
-
             _ctx = null;
-        }
-
-        /********************************
-         * for Hover
-         * *****************************/
-        private void ClearHover()
-        {
-            if (_currHoverItemVM == null) return;
-
-            var oldHover        = _currHoverItemVM;
-            _currHoverItemVM    = null;
-
-            OnHoverChanged(oldHover, _currHoverItemVM, null, _ctx != null);
         }
 
         /********************************
@@ -216,11 +195,14 @@ namespace XPlan
             // for override
             return DragOutcome.RejectSnapBack;
         }
-        protected virtual void OnHoverChanged(TDDItemViewModel oldHover, TDDItemViewModel newHover, PointerEventData e, bool duringDrag)
+        protected virtual void OnDragEnter(DragContext<TDDItemViewModel> ctx)
+        {
+            // for override            
+        }
+        protected virtual void OnDragExit(DragContext<TDDItemViewModel> ctx)
         {
             // for override
         }
-
         protected virtual void OnSnapBack(DragContext<TDDItemViewModel> ctx)
         {
 
@@ -231,7 +213,8 @@ namespace XPlan
     {
         // source
         public TDDItemViewModel SourceItem { get; set; }
-        public int PointerId { get; set; }
+        public TDDItemViewModel DropTarget { get; set; }
+        public TDDItemViewModel DragHoverItem { get; set; }
 
         // position
         public Vector2 StartScreenPos { get; set; }
@@ -239,7 +222,7 @@ namespace XPlan
         public Vector2 Delta => CurrentScreenPos - StartScreenPos;
 
         // state
-        public TDDItemViewModel DropTarget { get; set; }
+        public int PointerId { get; set; }
         public DragPhase Phase { get; set; }
         public bool IsDragging => Phase == DragPhase.Begin || Phase == DragPhase.Drag;
         public bool IsDropped => Phase == DragPhase.Drop;
@@ -254,8 +237,8 @@ namespace XPlan
 
         Cancel,
 
-        ItemEnter,
-        ItemExit,
+        DragEnter,
+        DragExit,
     }
 
     public interface IGhostIconController

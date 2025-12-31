@@ -48,7 +48,11 @@ namespace Demo.Inventory
                 return DragOutcome.RejectSnapBack;
             }                
         }
-        protected override void OnHoverChanged(InventoryItemViewModel oldHover, InventoryItemViewModel newHover, PointerEventData e, bool duringDrag)
+        protected override void OnDragEnter(DragContext<InventoryItemViewModel> ctx)
+        {
+            // for override
+        }
+        protected override void OnDragExit(DragContext<InventoryItemViewModel> ctx)
         {
             // for override
         }
