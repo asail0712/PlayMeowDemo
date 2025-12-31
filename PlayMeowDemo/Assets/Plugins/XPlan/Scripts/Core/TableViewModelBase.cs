@@ -52,6 +52,22 @@ namespace XPlan
             return Items.Value[index];
         }
 
+        protected List<TItemViewModel> GetAll()
+        {
+            return Items.Value;
+        }
+
+        protected void ModifyData(TItemViewModel newItem, int index)
+        {
+            if (!Items.Value.IsValidIndex(index))
+            {
+                return;
+            }
+
+            Items.Value[index] = newItem;
+            Items.ForceNotify();    // 強制觸發 Items 的 OnValueChanged 事件
+        }
+
         protected void ClearData()
         {
             // ... 執行資料清理或轉換邏輯 ...

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -18,8 +19,6 @@ namespace XPlan
             for (int i = 0; i < num; ++i)
             {
                 TDDItemViewModel itemVM = new TDDItemViewModel();
-                itemVM.Init(i);
-
                 itemVMList.Add(itemVM);
             }
 
@@ -50,9 +49,15 @@ namespace XPlan
 
             OnDragBegin(_ctx);
 
-            // ghost icon
-            _ghost?.Show();
-            _ghost?.Move(_ctx.CurrentScreenPos);
+            IGhostPayload ghostPayload = itemVM.CreateGhostPayload();
+
+            if(ghostPayload != null)
+            {
+                // ghost icon
+                _ghost?.Bind(ghostPayload);
+                _ghost?.Show(e.position);
+                _ghost?.Move(_ctx.CurrentScreenPos);
+            }
         }
 
         [DragBinding(DragPhase.Drag)]
@@ -135,13 +140,13 @@ namespace XPlan
             EndDragAndCleanup(DragOutcome.RejectSnapBack);
         }
 
-        private void EndDragAndCleanup(DragOutcome dragOutcome, bool hideGhost = true)
+        private async void EndDragAndCleanup(DragOutcome dragOutcome, bool hideGhost = true)
         {
             if (_ctx == null) 
                 return; // 已結算/已清理（例如 Drop 已處理或物件狀態變更）
 
             if (dragOutcome == DragOutcome.RejectSnapBack)
-                SnapBack(_ctx);
+                await SnapBack(_ctx);
 
             if (hideGhost)
                 _ghost?.Hide();
@@ -176,7 +181,7 @@ namespace XPlan
             // 如果正在拖曳，立刻同步狀態（可選）
             if (_ctx != null && _ctx.IsDragging)
             {
-                _ghost?.Show();
+                _ghost?.Show(_ctx.CurrentScreenPos);
                 _ghost?.Move(_ctx.CurrentScreenPos);
             }
         }
@@ -184,9 +189,9 @@ namespace XPlan
         /********************************
          * for SnapBack
          * *****************************/
-        private void SnapBack(DragContext<TDDItemViewModel> ctx)
+        private async Task SnapBack(DragContext<TDDItemViewModel> ctx)
         {
-            _ghost?.SnapBackTo(ctx.StartScreenPos);
+            await _ghost?.SnapBackTo(ctx.StartScreenPos);
 
             OnSnapBack(ctx);
         }
@@ -255,10 +260,11 @@ namespace XPlan
 
     public interface IGhostIconController
     {
-        void Show();
+        void Show(Vector2 screenPos);
         void Move(Vector2 screenPos);
         void Hide();
-        void SnapBackTo(Vector2 startScreenPos); // optional
+        Task SnapBackTo(Vector2 startScreenPos); // optional
+        void Bind(IGhostPayload payload);   // 或 Bind(IGhostVisualData data)
     }
 
     public enum DragOutcome

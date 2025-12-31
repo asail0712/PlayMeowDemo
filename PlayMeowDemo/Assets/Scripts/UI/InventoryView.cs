@@ -1,10 +1,21 @@
-﻿using UnityEngine;
-using XPlan.UI;
+﻿using XPlan.UI;
 
-namespace Demo.DragDrop
+namespace Demo.Inventory
 {
-    public class InventoryView : TableViewBase<InventoryViewModel, InventoryItemView, InventoryItemViewModel>
+    public class InventoryView : DDViewBase<InventoryViewModel, InventoryItemView, InventoryItemViewModel>
     {
+        private new void Awake()
+        {
+            base.Awake();
+        }
 
+        protected override void OnTableViewReady(InventoryViewModel vm)
+        {
+            base.OnTableViewReady(vm);
+
+            ImageGhostIconController iconController = GetComponent<ImageGhostIconController>();
+
+            vm.SetGhostController(iconController);
+        }
     }
 }

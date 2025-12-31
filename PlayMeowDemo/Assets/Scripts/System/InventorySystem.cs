@@ -1,13 +1,14 @@
-﻿using UnityEngine;
-using XPlan;
+﻿using XPlan;
 
-namespace Demo
+namespace Demo.Inventory
 {
     public class InventorySystem : SystemBase
     {
         protected override void OnInitialLogic()
         {
-            RegisterLogic(new InventoryViewModel());
+            InventoryViewModel vm = new InventoryViewModel();
+
+            RegisterLogic(vm);
         }   
     }
 }

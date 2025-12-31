@@ -17,14 +17,6 @@ namespace XPlan.UI
         private Action<TItemViewModel, PointerEventData> _onItemExit;
 
         // ===============================
-        // DragDrop 相關
-        // ===============================
-        protected virtual void SnapBack()
-        {
-            // 留給子類別實作
-        }
-
-        // ===============================
         // Event Trigger
         // ===============================
         public void OnBeginDrag(PointerEventData eventData)

@@ -1,10 +1,42 @@
-﻿using UnityEngine;
-using XPlan;
+﻿using XPlan;
 
-namespace Demo
+namespace Demo.Inventory
 {
-    public class InventoryItemViewModel : DragDropViewModelBase
+    public class InventoryItemViewModel : DDItemViewModelBase
     {
+        public ObservableProperty<InventoryItemData> ItemData = new ObservableProperty<InventoryItemData>();
 
+        public InventoryItemViewModel()
+        {
+
+        }
+
+        public bool IsEmpty()
+        {
+            return ItemData.Value == null || ItemData.Value.IsEmpty();
+        }
+
+        public override IGhostPayload CreateGhostPayload()
+        {
+            if(ItemData.Value == null || ItemData.Value.IsEmpty())
+            {
+                return null;
+            }
+
+            return new GhostSpritePayload(ItemData.Value.IconKey);
+        }
+    }
+
+    public sealed class InventoryItemData
+    {
+        public string IconKey { get; set; } = string.Empty;
+        public float Alpha { get; set; }
+        public bool Mask { get; set; }
+        public int ItemId { get; set; }     = -1;
+
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(IconKey) && ItemId == -1;
+        }
     }
 }
