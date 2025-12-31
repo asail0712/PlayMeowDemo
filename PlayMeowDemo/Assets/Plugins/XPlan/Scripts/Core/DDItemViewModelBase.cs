@@ -20,29 +20,18 @@ namespace XPlan
                 ShouldSnapBack  = snapBack
             };
     }
-
-
-    public class DragDropViewModelBase : ItemViewModelBase
+    public class DDItemViewModelBase : ItemViewModelBase
     {
-        // output（VM 處理完的結果）
-        public ObservableProperty<DragDropResult> DropResult { get; }
-            = new ObservableProperty<DragDropResult>(null);
+        private int id = -1;
 
-
-        internal void RequestDrop(DragDropViewModelBase source)
+        public DDItemViewModelBase()
         {
-            if (source.GetType() != GetType())
-            {
-                DropResult.Value = DragDropResult.Fail("Not Same Type !!");
-                return;
-            }
 
-            HandleDrop(source);
         }
 
-        protected void HandleDrop(DragDropViewModelBase source)
+        public void Init(int id)
         {
-            // 依照業務邏輯修改 DropResult
+            this.id = id;
         }
     }
 }

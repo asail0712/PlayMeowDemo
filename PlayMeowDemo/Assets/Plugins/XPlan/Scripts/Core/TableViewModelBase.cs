@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using XPlan.Utility;
 
 namespace XPlan
 {
@@ -30,6 +31,25 @@ namespace XPlan
 
             // 同步更新其他屬性
             IsListRootVisible.Value = Items.Value != null && Items.Value.Count != 0;
+        }
+
+        protected void InsertData(TItemViewModel newItem, int i)
+        {
+            // ... 執行資料清理或轉換邏輯 ...
+            Items.Value.Insert(i, newItem);
+            Items.ForceNotify();    // 強制觸發 Items 的 OnValueChanged 事件
+
+            // 同步更新其他屬性
+            IsListRootVisible.Value = Items.Value != null && Items.Value.Count != 0;
+        }
+        protected TItemViewModel GetData(int index)
+        {
+            if(!Items.Value.IsValidIndex(index))
+            {
+                return null; //default(TItemViewModel);
+            }
+
+            return Items.Value[index];
         }
 
         protected void ClearData()
