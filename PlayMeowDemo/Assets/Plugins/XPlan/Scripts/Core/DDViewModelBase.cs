@@ -31,6 +31,9 @@ namespace XPlan
         [DragBinding(DragPhase.Begin)]
         public void OnBeginDrag(TDDItemViewModel itemVM, PointerEventData e)
         {
+            if (!itemVM.CanDrag())
+                return;
+
             if (_ctx != null)
                 CancelDrag("Begin while previous ctx still alive");
 
@@ -139,13 +142,16 @@ namespace XPlan
             if (_ctx == null) 
                 return; // 已結算/已清理（例如 Drop 已處理或物件狀態變更）
 
+            // Drop 與 EndDrag透過 _ctx == null 來避免做兩次clean
+            // 若是延後_ctx = null，可能會造成兩次clean
+            var tmpCtx  = _ctx;
+            _ctx        = null;
+
             if (dragOutcome == DragOutcome.RejectSnapBack)
-                await SnapBack(_ctx);
+                await SnapBack(tmpCtx);
 
             if (hideGhost)
                 _ghost?.Hide();
-
-            _ctx = null;
         }
 
         /********************************

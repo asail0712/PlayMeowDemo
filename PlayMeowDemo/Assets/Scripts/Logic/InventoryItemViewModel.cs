@@ -11,6 +11,11 @@ namespace Demo.Inventory
 
         }
 
+        public override bool CanDrag()
+        {
+            return !IsEmpty();
+        }
+
         public bool IsEmpty()
         {
             return ItemData.Value == null || ItemData.Value.IsEmpty();
