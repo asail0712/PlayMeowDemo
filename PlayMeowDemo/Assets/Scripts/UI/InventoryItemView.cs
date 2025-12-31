@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+using XPlan;
 using XPlan.UI;
 using XPlan.Utility;
 
@@ -11,27 +13,23 @@ namespace Demo.Inventory
         [SerializeField] private Image iconImg;
         [SerializeField] private List<IconInfo> iconList = new List<IconInfo>();
 
-        protected override void OnDataBound()
+        [ObBinding]
+        public void OnItemDataChange(InventoryItemData itemData)
         {
-            _viewModel.ItemData.Subscribe((data) =>
+            if (itemData == null || itemData.IsEmpty())
             {
-                if (data == null || data.IsEmpty())
-                {
-                    iconImg.enabled = false;
-                    return;
-                }
+                iconImg.enabled = false;
+                return;
+            }
 
-                iconImg.enabled = true;
+            iconImg.enabled = true;
 
-                int idx = iconList.FindIndex(e04 => e04.iconKey == data.IconKey);
+            int idx = iconList.FindIndex(e04 => e04.iconKey == itemData.IconKey);
 
-                if(iconList.IsValidIndex(idx))
-                {
-                    iconImg.sprite = iconList[idx].icon;
-                }
-            });
-
-            _viewModel.ItemData.ForceNotify();
+            if (iconList.IsValidIndex(idx))
+            {
+                iconImg.sprite = iconList[idx].icon;
+            }
         }
     }
 }

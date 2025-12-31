@@ -6,11 +6,6 @@ namespace Demo.Inventory
     {
         public ObservableProperty<InventoryItemData> ItemData = new ObservableProperty<InventoryItemData>();
 
-        public InventoryItemViewModel()
-        {
-
-        }
-
         public override bool CanDrag()
         {
             return !IsEmpty();
